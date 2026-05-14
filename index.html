@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainable Landfill Liner Simulation</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --text-color: #e2e8f0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1100px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 { margin: 0 0 10px 0; color: #fff; font-weight: 300; letter-spacing: 1px; }
+        header p { margin: 0; color: #a0aec0; }
+
+        .app-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .canvas-container {
+            flex: 2;
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 500px;
+        }
+
+        /* Overlay labels for the canvas layers */
+        .layer-labels {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+        }
+        .label {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: rgba(255,255,255,0.7);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        .label.air { height: 20%; }
+        .label.waste { height: 40%; display:flex; align-items:flex-end;}
+        .label.liner { height: 16%; display:flex; align-items:center; color: #fff;}
+        .label.water { height: 24%; display:flex; align-items:center;}
+
+        .controls {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #cbd5e1; }
+        
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #38bdf8;
+        }
+
+        button {
+            width: 100%;
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid #38bdf8;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: #38bdf8;
+            color: #0f2027;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .data-readout {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            border-left: 4px solid #38bdf8;
+            transition: border-color 0.3s;
+        }
+
+        .data-readout p { margin: 8px 0; }
+        .data-readout span { font-weight: bold; font-family: monospace; font-size: 1.1rem;}
+
+        .status-warning { color: #f87171; }
+        .status-optimum { color: #34d399; }
+        .status-danger { color: #fbbf24; }
+
+        footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+            color: #94a3b8;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 850px) {
+            .app-layout { flex-direction: column; }
+            .controls, .canvas-container { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="glass-panel">
+        <header>
+            <h1>Landfill Liner Permeability Simulator</h1>
+            <p>Evaluating Soil-Bentonite Mixtures for Groundwater Protection</p>
+        </header>
+
+        <div class="app-layout">
+            <!-- Canvas Animation Area -->
+            <div class="canvas-container">
+                <canvas id="simCanvas"></canvas>
+                <div class="layer-labels">
+                    <div class="label air">Atmosphere / Precipitation</div>
+                    <div class="label waste">Municipal Solid Waste (Leachate Generation)</div>
+                    <div class="label liner">Compacted Clay + Additive Liner</div>
+                    <div class="label water">Groundwater Aquifer</div>
+                </div>
+            </div>
+
+            <!-- UI Controls Area -->
+            <div class="controls">
+                <div class="control-group">
+                    <button id="rainBtn">Start Rain</button>
+                </div>
+
+                <div class="control-group">
+                    <label for="bentoniteSlider">Bentonite Additive: <span id="bentoniteDisplay">0</span>%</label>
+                    <input type="range" id="bentoniteSlider" min="0" max="20" value="0">
+                </div>
+
+                <div class="data-readout" id="readoutBox">
+                    <p>Permeability ($k$): <span id="kValueDisplay">1.0 × 10⁻⁴ cm/s</span></p>
+                    <p>Flow State: <span id="flowStateDisplay">Rapid Percolation</span></p>
+                    <p>Efficiency: <strong id="efficiencyDisplay" class="status-warning">POOR (Groundwater at Risk)</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div><strong>References:</strong> IS 13620 (1993) | MoEFCC Hazardous Waste Guidelines</div>
+            <div>Designed for Civil Engineering Analysis</div>
+        </footer>
+    </main>
+
+    <script>
+        // --- SETUP & CANVAS CONTEXT ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Responsive canvas sizing
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 500;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- SIMULATION STATE VARIABLES ---
+        let isRaining = false;
+        let bentonitePercent = 0;
+        let particles = [];
+        
+        // Civil Engineering Thresholds
+        // Y-coordinates for the cross-section layers (based on a 500px height)
+        const LAYERS = {
+            airBottom: 100,
+            wasteBottom: 300,
+            linerBottom: 380, // 80px thick liner
+            waterBottom: 500
+        };
+
+        // --- DOM ELEMENTS ---
+        const rainBtn = document.getElementById('rainBtn');
+        const bentoniteSlider = document.getElementById('bentoniteSlider');
+        const bentoniteDisplay = document.getElementById('bentoniteDisplay');
+        const kValueDisplay = document.getElementById('kValueDisplay');
+        const flowStateDisplay = document.getElementById('flowStateDisplay');
+        const efficiencyDisplay = document.getElementById('efficiencyDisplay');
+        const readoutBox = document.getElementById('readoutBox');
+
+        // --- CONTROLS LOGIC ---
+        rainBtn.addEventListener('click', () => {
+            isRaining = !isRaining;
+            rainBtn.textContent = isRaining ? "Stop Rain" : "Start Rain";
+            rainBtn.style.background = isRaining ? "rgba(248, 113, 113, 0.2)" : "rgba(56, 189, 248, 0.2)";
+            rainBtn.style.borderColor = isRaining ? "#f87171" : "#38bdf8";
+        });
+
+        bentoniteSlider.addEventListener('input', (e) => {
+            bentonitePercent = parseInt(e.target.value);
+            bentoniteDisplay.textContent = bentonitePercent;
+            updateEngineeringData();
+        });
+
+        function updateEngineeringData() {
+            if (bentonitePercent === 0) {
+                kValueDisplay.textContent = "1.0 × 10⁻⁴ cm/s";
+                flowStateDisplay.textContent = "Rapid Percolation";
+                efficiencyDisplay.textContent = "POOR (Groundwater at Risk)";
+                efficiencyDisplay.className = "status-warning";
+                readoutBox.style.borderLeftColor = "#f87171";
+            } else if (bentonitePercent > 0 && bentonitePercent <= 4) {
+                kValueDisplay.textContent = "1.0 × 10⁻⁵ cm/s";
+                flowStateDisplay.textContent = "Slow Percolation";
+                efficiencyDisplay.textContent = "INADEQUATE (Voids open)";
+                efficiencyDisplay.className = "status-danger";
+                readoutBox.style.borderLeftColor = "#fbbf24";
+            } else if (bentonitePercent >= 5 && bentonitePercent <= 10) {
+                kValueDisplay.textContent = "≤ 1.0 × 10⁻⁷ cm/s";
+                flowStateDisplay.textContent = "Blocked & Redirected";
+                efficiencyDisplay.textContent = "OPTIMUM (Highly Impermeable)";
+                efficiencyDisplay.className = "status-optimum";
+                readoutBox.style.borderLeftColor = "#34d399";
+            } else {
+                kValueDisplay.textContent = "1.0 × 10⁻⁸ cm/s";
+                flowStateDisplay.textContent = "Blocked (System Failing)";
+                efficiencyDisplay.textContent = "UNECONOMICAL (Desiccation Cracking)";
+                efficiencyDisplay.className = "status-danger";
+                readoutBox.style.borderLeftColor = "#fbbf24";
+            }
+        }
+
+        // --- PARTICLE PHYSICS ENGINE ---
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = 0;
+                this.vx = 0;
+                this.vy = 4 + Math.random() * 2; // Rain falling speed
+                this.size = 2;
+                this.color = '#bae6fd'; // Clean rain water
+                this.state = 'rain'; // rain, leachate, drained, groundwater
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 1. Through Air
+                if (this.y < LAYERS.airBottom) {
+                    this.state = 'rain';
+                    this.color = '#bae6fd';
+                }
+                
+                // 2. Through Solid Waste (Creates Leachate)
+                else if (this.y >= LAYERS.airBottom && this.y < LAYERS.wasteBottom) {
+                    this.state = 'leachate';
+                    this.color = '#854d0e'; // Dirty/toxic color
+                    this.vy = 1.5; // Slows down hitting garbage
+                    this.vx = (Math.random() - 0.5) * 0.5; // Meandering path through waste
+                }
+                
+                // 3. Hitting the Liner Layer
+                else if (this.y >= LAYERS.wasteBottom && this.y < LAYERS.linerBottom) {
+                    // Reset horizontal meandering
+                    if (this.state === 'leachate') this.vx = 0;
+
+                    // Permeability Logic (Darcy's Law Simulation)
+                    if (bentonitePercent <= 4) {
+                        // High Permeability - Flows straight down
+                        this.vy = 0.5 - (bentonitePercent * 0.1); 
+                    } 
+                    else if (bentonitePercent >= 5 && bentonitePercent <= 10) {
+                        // OPTIMUM: Impermeable. Leachate is blocked.
+                        this.vy = 0; // Stop vertical flow
+                        this.y = LAYERS.wasteBottom + 2; // Pool at the top of the liner
+                        
+                        // Redirect to Drainage (simulate 2% slope)
+                        this.state = 'drained';
+                        this.color = '#ca8a04';
+                        // Move left or right depending on which half of the screen it's on
+                        this.vx = (this.x < canvas.width / 2) ? -1 : 1; 
+                    }
+                    else if (bentonitePercent > 10) {
+                        // TOO HIGH: Stops water, but cracks form (handled in draw function)
+                        this.vy = 0;
+                        this.y = LAYERS.wasteBottom + 2;
+                        this.vx = (this.x < canvas.width / 2) ? -0.5 : 0.5; // Slower drainage due to poor workability
+                    }
+                }
+                
+                // 4. Entering Groundwater
+                else if (this.y >= LAYERS.linerBottom) {
+                    this.vy = 0.5; // Moves into aquifer
+                    this.vx = 0;
+                    if (this.state === 'leachate') {
+                        // Contaminates groundwater visually
+                        this.size = 3;
+                        this.color = '#b91c1c'; // Red/dark indicating pollution
+                    }
+                }
+
+                // Cleanup particles that go off screen
+                if (this.y > canvas.height || this.x < 0 || this.x > canvas.width) {
+                    this.dead = true;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // --- DRAWING THE ENVIRONMENT ---
+        function drawCrossSection() {
+            // Sky Background
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, canvas.width, LAYERS.airBottom);
+
+            // Waste Layer
+            ctx.fillStyle = '#452c1e'; // Dark brown
+            ctx.fillRect(0, LAYERS.airBottom, canvas.width, LAYERS.wasteBottom - LAYERS.airBottom);
+            
+            // Texture for Waste (Simple dots/lines)
+            ctx.fillStyle = '#311c10';
+            for(let i=0; i<50; i++) {
+                ctx.fillRect(Math.random() * canvas.width, LAYERS.airBottom + Math.random() * 200, 10, 10);
+            }
+
+            // Liner Layer (Color changes based on bentonite)
+            // Starts sandy (low bentonite), gets darker/denser (optimum), gets too dark (over-compacted)
+            let linerColor = '#b08d6a'; // 0%
+            if (bentonitePercent > 0) linerColor = '#9c7752'; // 1-4%
+            if (bentonitePercent >= 5) linerColor = '#7a5a3a'; // 5-10% Optimum
+            if (bentonitePercent > 10) linerColor = '#5c432a'; // >10% Too dense
+            
+            ctx.fillStyle = linerColor;
+            ctx.fillRect(0, LAYERS.wasteBottom, canvas.width, LAYERS.linerBottom - LAYERS.wasteBottom);
+
+            // Drainage Pipes (Visible if bentonite is effective)
+            if (bentonitePercent >= 5) {
+                ctx.fillStyle = '#94a3b8';
+                ctx.beginPath();
+                ctx.arc(20, LAYERS.wasteBottom + 10, 15, 0, Math.PI * 2); // Left pipe
+                ctx.arc(canvas.width - 20, LAYERS.wasteBottom + 10, 15, 0, Math.PI * 2); // Right pipe
+                ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(20, LAYERS.wasteBottom + 10, 8, 0, Math.PI * 2);
+                ctx.arc(canvas.width - 20, LAYERS.wasteBottom + 10, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw Desiccation Cracks if bentonite is > 10%
+            if (bentonitePercent > 10) {
+                ctx.strokeStyle = '#291b11';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for(let c=1; c<6; c++) {
+                    let cx = (canvas.width / 6) * c;
+                    ctx.moveTo(cx, LAYERS.wasteBottom);
+                    ctx.lineTo(cx - 10, LAYERS.wasteBottom + 30);
+                    ctx.lineTo(cx + 15, LAYERS.linerBottom - 10);
+                }
+                ctx.stroke();
+            }
+
+            // Groundwater Layer
+            ctx.fillStyle = '#0f766e'; // Deep water blue/green
+            ctx.fillRect(0, LAYERS.linerBottom, canvas.width, canvas.height - LAYERS.linerBottom);
+        }
+
+        // --- MAIN ANIMATION LOOP ---
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawCrossSection();
+
+            // Generate Rain
+            if (isRaining && Math.random() < 0.4) {
+                particles.push(new Particle());
+                particles.push(new Particle()); // Add multiple for heavier visual
+            }
+
+            // Update and Draw Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw();
+                
+                // Remove dead particles
+                if (p.dead) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize display and start loop
+        updateEngineeringData();
+        animate();
+
+    </script>
+</body>
+</html>
