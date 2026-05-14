@@ -3,151 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Sustainable Landfill Liner Simulation</title>
+    <title>Premium Landfill Liner & Groundwater Simulation</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-            --text-color: #f1f5f9;
+            --glass-bg: rgba(15, 23, 42, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --danger: #ef4444;
+            --safe: #10b981;
+            --warning: #f59e0b;
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
+            transition: background 1s ease-in-out;
+            /* Default Background (No Rain) */
+            background: radial-gradient(circle at top right, #1e293b 0%, #020617 100%);
+            overflow-x: hidden;
         }
+
+        body.weather-light { background: radial-gradient(circle at top, #334155 0%, #0f172a 100%); }
+        body.weather-storm { background: radial-gradient(circle at top left, #1e1b4b 0%, #020617 80%); }
 
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 2rem;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1300px;
             box-shadow: var(--glass-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
             border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 1rem;
+            padding-bottom: 1.5rem;
         }
 
-        header h1 { margin: 0 0 5px 0; color: #fff; font-size: 2.2rem;}
-        header p { margin: 0; color: #94a3b8; font-size: 1.1rem;}
+        header h1 { margin: 0; font-weight: 800; font-size: 2.2rem; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
+        header p { margin: 8px 0 0 0; color: var(--text-muted); font-size: 1.1rem; font-weight: 300;}
 
-        .app-layout {
-            display: flex;
-            gap: 2rem;
-            align-items: stretch;
-        }
+        .main-content { display: flex; gap: 2rem; align-items: stretch; }
 
-        .canvas-container {
+        .canvas-wrapper {
             flex: 2;
             position: relative;
-            background: #000;
-            border-radius: 12px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
             overflow: hidden;
-            border: 2px solid #334155;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
-        canvas {
-            display: block;
-            width: 100%;
-            height: 600px;
-        }
+        canvas { display: block; width: 100%; height: 650px; }
 
-        /* Fixed Layer Labels for Proportions */
-        .layer-labels {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-        }
-        .label {
-            padding: 15px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: rgba(255,255,255,0.8);
-            text-shadow: 2px 2px 4px rgba(0,0,0,1);
-        }
-        .label.air { height: 15%; }
-        .label.waste { height: 45%; display:flex; align-items:flex-end;}
-        .label.liner { height: 10%; display:flex; align-items:center;}
-        .label.water { height: 30%; display:flex; align-items:center;}
-
-        .controls {
+        .controls-panel {
             flex: 1;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 1.5rem;
-            border-radius: 12px;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
 
         .control-group {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 1.2rem;
+            border-radius: 12px;
+        }
+
+        .control-group h3 { margin: 0 0 1rem 0; font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+
+        .btn-grid { display: grid; gap: 10px; }
+
+        button {
             background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        label { display: block; margin-bottom: 10px; font-weight: bold; color: #cbd5e1; font-size: 1.1rem;}
-        
-        input[type=range] { width: 100%; cursor: pointer; accent-color: #38bdf8; }
-
-        .toggle-btn {
-            width: 100%;
-            background: #1e293b;
-            border: 2px solid #38bdf8;
-            color: #fff;
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            margin-bottom: 8px;
-        }
-        .toggle-btn.active {
-            background: #38bdf8;
-            color: #0f172a;
-        }
-        .toggle-btn.danger.active {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: #fff;
-        }
-
-        .data-readout {
-            background: rgba(0,0,0,0.5);
-            padding: 20px;
+            color: var(--text-main);
+            padding: 12px;
             border-radius: 8px;
-            border-left: 5px solid #38bdf8;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
         }
 
-        .data-readout p { margin: 10px 0; font-size: 1rem; color: #cbd5e1;}
-        .data-readout span { font-weight: bold; color: #fff; font-size: 1.1rem;}
+        button:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
 
-        .status-safe { color: #10b981 !important; }
-        .status-warning { color: #f59e0b !important; }
-        .status-danger { color: #ef4444 !important; }
+        button.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #020617;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
 
-        @media (max-width: 900px) {
-            .app-layout { flex-direction: column; }
+        .btn-drainage { text-align: center; font-size: 1.1rem; }
+        .btn-drainage.active { background: var(--safe); border-color: var(--safe); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .btn-drainage:not(.active) { background: var(--danger); border-color: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); color: white;}
+
+        .status-board {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--safe);
+            transition: border-color 0.3s;
+        }
+
+        .status-row { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .status-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .status-label { color: var(--text-muted); font-size: 0.95rem; }
+        .status-val { font-weight: 800; font-size: 1.05rem; }
+
+        .text-safe { color: var(--safe); }
+        .text-warning { color: var(--warning); }
+        .text-danger { color: var(--danger); }
+
+        @media (max-width: 1024px) {
+            .main-content { flex-direction: column; }
+            canvas { height: 500px; }
         }
     </style>
 </head>
@@ -155,324 +150,400 @@
 
     <main class="glass-panel">
         <header>
-            <h1>Advanced Landfill Liner Physics</h1>
-            <p>Evaluating Bentonite Additives, Drainage, and Hydraulic Head Pressure</p>
+            <h1>Sustainable Landfill Liner Dynamics</h1>
+            <p>Evaluating Natural Decomposition, Heavy Metal Transport, and Hydraulic Head Failure</p>
         </header>
 
-        <div class="app-layout">
-            <div class="canvas-container">
+        <div class="main-content">
+            <div class="canvas-wrapper">
                 <canvas id="simCanvas"></canvas>
-                <div class="layer-labels">
-                    <div class="label air">Precipitation Zone</div>
-                    <div class="label waste">Municipal Solid Waste (Leachate Generation)</div>
-                    <div class="label liner">Engineered Liner System</div>
-                    <div class="label water">Groundwater Aquifer</div>
-                </div>
             </div>
 
-            <div class="controls">
+            <div class="controls-panel">
+                
                 <div class="control-group">
-                    <label>Environmental Conditions</label>
-                    <button id="rainBtn" class="toggle-btn">Start Rain (Light)</button>
-                    <button id="intensityBtn" class="toggle-btn">Switch to Heavy Storm</button>
+                    <h3>1. Precipitation State</h3>
+                    <div class="btn-grid" id="weather-controls">
+                        <button class="active" data-val="none">None (Natural Moisture Only)</button>
+                        <button data-val="light">Light Rain</button>
+                        <button data-val="storm">Heavy Storm</button>
+                    </div>
                 </div>
 
                 <div class="control-group">
-                    <label>Engineering Controls</label>
-                    <button id="drainageBtn" class="toggle-btn active">Leachate Drainage (LCS): ON</button>
-                    <label style="margin-top: 15px;">Bentonite Additive: <span id="bentoniteDisplay">8</span>%</label>
-                    <input type="range" id="bentoniteSlider" min="0" max="20" value="8">
+                    <h3>2. Liner Quality</h3>
+                    <div class="btn-grid" id="liner-controls">
+                        <button data-val="high_perm">High Permeability (Natural Soil)</button>
+                        <button class="active" data-val="optimal">Optimal Impermeability (Compacted)</button>
+                        <button data-val="brittle">Over-Compacted (Brittle/Cracks Easily)</button>
+                    </div>
                 </div>
 
-                <div class="data-readout" id="readoutBox">
-                    <p>Permeability (k): <span id="kValueDisplay">< 10^-7 cm/s</span></p>
-                    <p>Hydraulic Head: <span id="headDisplay">0 m</span></p>
-                    <p>System Status: <br><strong id="efficiencyDisplay" class="status-safe">SAFE (Operating Optimally)</strong></p>
+                <div class="control-group">
+                    <h3>3. Leachate Collection System</h3>
+                    <button id="btn-drainage" class="btn-drainage active">Drainage: ACTIVE</button>
+                </div>
+
+                <div class="status-board" id="status-board">
+                    <div class="status-row">
+                        <span class="status-label">Hydraulic Head Pressure:</span>
+                        <span class="status-val text-safe" id="val-pressure">Low</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">System Structural Integrity:</span>
+                        <span class="status-val text-safe" id="val-integrity">Stable</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Groundwater Status:</span>
+                        <span class="status-val text-safe" id="val-groundwater">Safe</span>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
+        // --- Setup & Sizing ---
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
         
-        function resizeCanvas() {
+        function resize() {
             canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = 600;
+            canvas.height = canvas.parentElement.clientHeight;
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', resize);
+        resize();
 
-        // Layer Proportions based on 600px height
-        const LAYERS = {
-            airBottom: 90,     // 15%
-            wasteBottom: 360,  // 45% (Thick waste layer)
-            linerBottom: 420,  // 10% (Liner)
-            waterBottom: 600   // 30% (Aquifer)
+        // --- Layers (Y-coordinates as percentages of height) ---
+        function getLayers() {
+            return {
+                sky: canvas.height * 0.15,
+                waste: canvas.height * 0.65, // Massive waste layer
+                liner: canvas.height * 0.75,
+                water: canvas.height * 1.00
+            };
+        }
+
+        // --- State Management ---
+        const state = {
+            weather: 'none', // 'none', 'light', 'storm'
+            liner: 'optimal', // 'high_perm', 'optimal', 'brittle'
+            drainage: true,
+            isRuptured: false,
+            pressurePool: 0,
+            groundwaterContaminated: false
         };
 
-        // Simulation State
-        let isRaining = false;
-        let isHeavyRain = false;
-        let drainageOn = true;
-        let bentonitePercent = 8;
+        const limits = {
+            optimal_max_head: 400,
+            brittle_max_head: 150 // Fails much faster
+        };
+
         let particles = [];
-        
-        // Physics Variables
-        let pooledLeachate = 0; // Tracks hydraulic head pressure
-        let linerFailed = false; // Triggered if pressure is too high
-        const MAX_HEAD_PRESSURE = 300; // Particle count before failure
 
-        // DOM Elements
-        const rainBtn = document.getElementById('rainBtn');
-        const intensityBtn = document.getElementById('intensityBtn');
-        const drainageBtn = document.getElementById('drainageBtn');
-        const bentoniteSlider = document.getElementById('bentoniteSlider');
-        const kValueDisplay = document.getElementById('kValueDisplay');
-        const headDisplay = document.getElementById('headDisplay');
-        const efficiencyDisplay = document.getElementById('efficiencyDisplay');
-        const readoutBox = document.getElementById('readoutBox');
-
-        // Listeners
-        rainBtn.addEventListener('click', () => {
-            isRaining = !isRaining;
-            rainBtn.classList.toggle('active');
-            rainBtn.textContent = isRaining ? "Stop Rain" : "Start Rain (Light)";
+        // --- UI Binding ---
+        document.querySelectorAll('#weather-controls button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#weather-controls button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                state.weather = e.target.getAttribute('data-val');
+                document.body.className = `weather-${state.weather}`;
+            });
         });
 
-        intensityBtn.addEventListener('click', () => {
-            isHeavyRain = !isHeavyRain;
-            intensityBtn.classList.toggle('danger');
-            intensityBtn.textContent = isHeavyRain ? "Switch to Light Rain" : "Switch to Heavy Storm";
-            if(isHeavyRain && !isRaining) rainBtn.click(); // Auto start rain on heavy
+        document.querySelectorAll('#liner-controls button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#liner-controls button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                state.liner = e.target.getAttribute('data-val');
+                // Reset rupture if liner is replaced
+                state.isRuptured = false;
+                state.pressurePool = 0;
+                updateStatus();
+            });
         });
 
-        drainageBtn.addEventListener('click', () => {
-            drainageOn = !drainageOn;
-            drainageBtn.classList.toggle('active');
-            drainageBtn.classList.toggle('danger', !drainageOn);
-            drainageBtn.textContent = drainageOn ? "Leachate Drainage (LCS): ON" : "Leachate Drainage (LCS): OFF";
-            updateStatus();
+        const btnDrainage = document.getElementById('btn-drainage');
+        btnDrainage.addEventListener('click', () => {
+            state.drainage = !state.drainage;
+            btnDrainage.classList.toggle('active', state.drainage);
+            btnDrainage.textContent = state.drainage ? "Drainage: ACTIVE" : "Drainage: DISABLED (Pooling)";
         });
 
-        bentoniteSlider.addEventListener('input', (e) => {
-            bentonitePercent = parseInt(e.target.value);
-            document.getElementById('bentoniteDisplay').textContent = bentonitePercent;
-            // Reset failure state if engineered properly again
-            if (linerFailed && bentonitePercent >= 5 && pooledLeachate < MAX_HEAD_PRESSURE) linerFailed = false;
-            updateStatus();
-        });
-
+        // --- UI Status Updater ---
         function updateStatus() {
-            // Update Permeability Text
-            if (bentonitePercent < 5) {
-                kValueDisplay.textContent = "10^-4 to 10^-5 cm/s";
-            } else if (bentonitePercent >= 5 && bentonitePercent <= 12) {
-                kValueDisplay.textContent = "< 10^-7 cm/s";
+            const elPressure = document.getElementById('val-pressure');
+            const elIntegrity = document.getElementById('val-integrity');
+            const elGroundwater = document.getElementById('val-groundwater');
+            const board = document.getElementById('status-board');
+
+            // 1. Pressure
+            if (state.drainage || state.liner === 'high_perm' || state.isRuptured) {
+                elPressure.textContent = "Minimal / Draining";
+                elPressure.className = "status-val text-safe";
             } else {
-                kValueDisplay.textContent = "< 10^-8 cm/s";
+                let max = state.liner === 'optimal' ? limits.optimal_max_head : limits.brittle_max_head;
+                let pct = state.pressurePool / max;
+                if (pct > 0.8) { elPressure.textContent = "CRITICAL HIGH"; elPressure.className = "status-val text-danger"; }
+                else if (pct > 0.4) { elPressure.textContent = "Building (Warning)"; elPressure.className = "status-val text-warning"; }
+                else { elPressure.textContent = "Increasing"; elPressure.className = "status-val text-warning"; }
             }
 
-            // Logic for Overall Efficiency
-            if (linerFailed) {
-                efficiencyDisplay.textContent = "CATASTROPHIC FAILURE (Pressure Rupture)";
-                efficiencyDisplay.className = "status-danger";
-                readoutBox.style.borderLeftColor = "#ef4444";
-            } else if (bentonitePercent < 5) {
-                efficiencyDisplay.textContent = "FAILED (High Permeability, Contamination)";
-                efficiencyDisplay.className = "status-danger";
-                readoutBox.style.borderLeftColor = "#ef4444";
-            } else if (bentonitePercent >= 5 && !drainageOn) {
-                efficiencyDisplay.textContent = "WARNING (Hydraulic Head Building)";
-                efficiencyDisplay.className = "status-warning";
-                readoutBox.style.borderLeftColor = "#f59e0b";
-            } else if (bentonitePercent > 12) {
-                efficiencyDisplay.textContent = "INEFFICIENT (Cracking Risk / High Cost)";
-                efficiencyDisplay.className = "status-warning";
-                readoutBox.style.borderLeftColor = "#f59e0b";
+            // 2. Integrity
+            if (state.isRuptured) {
+                elIntegrity.textContent = "CATASTROPHIC FAILURE";
+                elIntegrity.className = "status-val text-danger";
+            } else if (state.liner === 'high_perm') {
+                elIntegrity.textContent = "Permeable (Ineffective)";
+                elIntegrity.className = "status-val text-danger";
+            } else if (state.liner === 'brittle') {
+                elIntegrity.textContent = "Brittle (High Risk)";
+                elIntegrity.className = "status-val text-warning";
             } else {
-                efficiencyDisplay.textContent = "SAFE (Operating Optimally)";
-                efficiencyDisplay.className = "status-safe";
-                readoutBox.style.borderLeftColor = "#10b981";
+                elIntegrity.textContent = "Stable (Optimal)";
+                elIntegrity.className = "status-val text-safe";
+            }
+
+            // 3. Groundwater & Border
+            if (state.groundwaterContaminated) {
+                elGroundwater.textContent = "CONTAMINATED (Toxic)";
+                elGroundwater.className = "status-val text-danger";
+                board.style.borderLeftColor = "var(--danger)";
+            } else {
+                elGroundwater.textContent = "Protected / Safe";
+                elGroundwater.className = "status-val text-safe";
+                board.style.borderLeftColor = "var(--safe)";
             }
         }
 
+        // --- Custom Drawing Functions ---
+        function drawWaterDrop(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x, y - size); // Top tip
+            ctx.bezierCurveTo(x + size, y - size/2, x + size, y + size, x, y + size);
+            ctx.bezierCurveTo(x - size, y + size, x - size, y - size/2, x, y - size);
+            ctx.fill();
+        }
+
+        function drawGlowingOrb(ctx, x, y, size, innerColor, outerColor) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = outerColor;
+            ctx.fillStyle = innerColor;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0; // Reset
+        }
+
+        // --- Particle Physics Engine ---
         class Particle {
-            constructor() {
+            constructor(isHeavyMetal = false, spawnY = 0) {
                 this.x = Math.random() * canvas.width;
-                this.y = 0;
+                this.y = spawnY;
                 this.vx = 0;
-                this.vy = 5 + Math.random() * 3;
-                this.size = 2.5;
-                this.color = '#38bdf8';
-                this.state = 'rain';
-                this.countedInPool = false;
+                this.vy = isHeavyMetal ? 0.5 : (3 + Math.random() * 2); // Metals move slower
+                this.isHeavyMetal = isHeavyMetal;
+                this.size = isHeavyMetal ? 3 : 4;
+                this.inPool = false;
+                this.isDraining = false;
             }
 
-            update() {
+            update(layers) {
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Air
-                if (this.y < LAYERS.airBottom) {
-                    this.state = 'rain';
+                // Zone 1: Sky
+                if (this.y < layers.sky) {
+                    // Rain falls fast
                 }
-                // Waste
-                else if (this.y >= LAYERS.airBottom && this.y < LAYERS.wasteBottom) {
-                    this.state = 'leachate';
-                    this.color = '#78350f'; // Dark toxic brown
-                    this.vy = 2; // Slows in waste
-                    this.vx = (Math.random() - 0.5); // Meander
+                // Zone 2: Waste Layer
+                else if (this.y >= layers.sky && this.y < layers.waste) {
+                    if (!this.isHeavyMetal) {
+                        this.vy = 1.5; // Slow down in waste
+                        this.vx = (Math.random() - 0.5) * 0.8; // Meander
+                    } else {
+                        // Heavy metals slowly seep down
+                        this.vy = 0.8; 
+                        this.vx = (Math.random() - 0.5) * 0.3;
+                    }
                 }
-                // Liner Physics
-                else if (this.y >= LAYERS.wasteBottom && this.y < LAYERS.linerBottom) {
-                    if (this.state === 'leachate') this.vx = 0;
+                // Zone 3: Liner Interaction
+                else if (this.y >= layers.waste && this.y < layers.liner) {
+                    this.vx = 0;
 
-                    // If liner failed due to pressure, water rushes through
-                    if (linerFailed) {
-                        this.vy = 4;
-                        if (this.countedInPool) {
-                            pooledLeachate--;
-                            this.countedInPool = false;
-                        }
-                    }
-                    // Poor Bentonite (Flows through)
-                    else if (bentonitePercent < 5) {
-                        this.vy = 1;
-                    } 
-                    // Good Bentonite (Impermeable)
-                    else {
+                    if (state.isRuptured || state.liner === 'high_perm') {
+                        // Fails: Drops straight through
+                        this.vy = this.isHeavyMetal ? 2 : 4; 
+                        if (this.inPool) { state.pressurePool--; this.inPool = false; }
+                    } else {
+                        // Stopped by liner
                         this.vy = 0;
-                        this.y = LAYERS.wasteBottom; // Stuck on top of liner
                         
-                        if (drainageOn) {
-                            // Flow sideways to pipes
-                            this.vx = (this.x < canvas.width / 2) ? -1.5 : 1.5;
-                            this.color = '#ca8a04'; // Drainage color
-                            if (this.countedInPool) {
-                                pooledLeachate--;
-                                this.countedInPool = false;
-                            }
+                        if (state.drainage) {
+                            // Safely route to sides
+                            this.vx = (this.x < canvas.width / 2) ? -2 : 2;
+                            this.y = layers.waste + 2; // Slide exactly on top
+                            this.isDraining = true;
+                            if (this.inPool) { state.pressurePool--; this.inPool = false; }
                         } else {
-                            // Pool up (Hydraulic Head)
-                            if (!this.countedInPool) {
-                                pooledLeachate++;
-                                this.countedInPool = true;
+                            // Pool up & Build Pressure
+                            if (!this.inPool) {
+                                state.pressurePool++;
+                                this.inPool = true;
+                                updateStatus();
                             }
-                            // Simulate stacking/pooling visually
-                            this.y = LAYERS.wasteBottom - (Math.random() * (pooledLeachate / 20));
-                            this.vx = (Math.random() - 0.5) * 0.2; // Jiggle
+                            // Simulate physical stacking
+                            let heightOffset = (state.pressurePool / 50);
+                            this.y = layers.waste - (Math.random() * heightOffset);
+                            this.vx = (Math.random() - 0.5) * 0.5; // Jiggle
                         }
                     }
                 }
-                // Groundwater
-                else if (this.y >= LAYERS.linerBottom) {
+                // Zone 4: Groundwater
+                else if (this.y >= layers.liner) {
                     this.vy = 1;
                     this.vx = 0;
-                    if (this.state === 'leachate') {
-                        this.size = 4;
-                        this.color = '#991b1b'; // Contamination red
-                    }
-                    if (this.countedInPool) {
-                        pooledLeachate--;
-                        this.countedInPool = false;
+                    if (this.inPool) { state.pressurePool--; this.inPool = false; }
+                    
+                    if (!state.groundwaterContaminated) {
+                        state.groundwaterContaminated = true;
+                        updateStatus();
                     }
                 }
 
-                // Cleanup and drainage exits
+                // Cleanup bounds & drainage pipes
                 if (this.y > canvas.height) this.dead = true;
-                if (drainageOn && bentonitePercent >= 5 && this.y >= LAYERS.wasteBottom - 5 && this.y < LAYERS.linerBottom) {
-                    // Remove if it hits the pipe areas (edges)
-                    if (this.x < 30 || this.x > canvas.width - 30) {
-                        this.dead = true;
-                    }
+                if (this.isDraining && (this.x < 20 || this.x > canvas.width - 20)) {
+                    this.dead = true; // Safely removed
                 }
             }
 
             draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                if (this.isHeavyMetal) {
+                    // Toxic metal visual
+                    drawGlowingOrb(ctx, this.x, this.y, this.size, '#a3e635', '#4d7c0f'); // Greenish toxic glow
+                } else {
+                    // Liquid visual based on zone
+                    let color = '#38bdf8'; // Clean rain
+                    if (this.y > getLayers().sky) color = '#78350f'; // Toxic brown leachate
+                    if (this.isDraining) color = '#ca8a04'; // Drainage color
+                    if (this.y > getLayers().liner && state.liner !== 'optimal') color = '#991b1b'; // Red contamination in water
+                    
+                    drawWaterDrop(ctx, this.x, this.y, this.size, color);
+                }
             }
         }
 
-        function drawEnvironment() {
-            // Sky
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, canvas.width, LAYERS.airBottom);
-
-            // Waste
-            ctx.fillStyle = '#3f2e24';
-            ctx.fillRect(0, LAYERS.airBottom, canvas.width, LAYERS.wasteBottom - LAYERS.airBottom);
+        // --- Rendering Logic ---
+        function drawEnvironment(layers) {
+            // Waste Layer
+            ctx.fillStyle = '#292524'; // Very dark grey/brown
+            ctx.fillRect(0, layers.sky, canvas.width, layers.waste - layers.sky);
             
-            // Liner Color Logic
-            let linerColor = '#a8a29e'; // Normal soil
-            if (bentonitePercent >= 5) linerColor = '#78716c'; // Compacted
-            if (bentonitePercent > 12) linerColor = '#57534e'; // Over-compacted
+            // Waste Texture (subtle debris)
+            ctx.fillStyle = '#44403c';
+            for(let i=0; i<100; i++) {
+                // Using pseudo-random based on width to keep it static-looking
+                let rx = (i * 73) % canvas.width; 
+                let ry = layers.sky + ((i * 31) % (layers.waste - layers.sky));
+                ctx.fillRect(rx, ry, 12, 12);
+            }
+
+            // Liner Layer
+            let linerColor = '#78716c'; // Optimal
+            if (state.liner === 'high_perm') linerColor = '#a8a29e'; // Sandy/Light
+            if (state.liner === 'brittle') linerColor = '#57534e'; // Very dark/hard
             
             ctx.fillStyle = linerColor;
-            ctx.fillRect(0, LAYERS.wasteBottom, canvas.width, LAYERS.linerBottom - LAYERS.wasteBottom);
+            ctx.fillRect(0, layers.waste, canvas.width, layers.liner - layers.waste);
 
-            // Draw Pipes if Drainage is ON
-            if (drainageOn && bentonitePercent >= 5) {
-                ctx.fillStyle = '#cbd5e1';
+            // Drainage Pipes (If Active)
+            if (state.drainage && state.liner !== 'high_perm') {
+                ctx.fillStyle = '#94a3b8'; // Pipe outer
                 ctx.beginPath();
-                ctx.arc(15, LAYERS.wasteBottom + 15, 20, 0, Math.PI * 2);
-                ctx.arc(canvas.width - 15, LAYERS.wasteBottom + 15, 20, 0, Math.PI * 2);
+                ctx.arc(10, layers.waste + 10, 25, 0, Math.PI * 2);
+                ctx.arc(canvas.width - 10, layers.waste + 10, 25, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#000';
+                ctx.fillStyle = '#000'; // Pipe hollow inside
                 ctx.beginPath();
-                ctx.arc(15, LAYERS.wasteBottom + 15, 12, 0, Math.PI * 2);
-                ctx.arc(canvas.width - 15, LAYERS.wasteBottom + 15, 12, 0, Math.PI * 2);
+                ctx.arc(10, layers.waste + 10, 15, 0, Math.PI * 2);
+                ctx.arc(canvas.width - 10, layers.waste + 10, 15, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            // Draw Failure Cracks
-            if (linerFailed) {
+            // Structural Rupture Visual
+            if (state.isRuptured) {
                 ctx.strokeStyle = '#000';
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 5;
                 ctx.beginPath();
-                ctx.moveTo(canvas.width/2, LAYERS.wasteBottom);
-                ctx.lineTo(canvas.width/2 - 20, LAYERS.wasteBottom + 30);
-                ctx.lineTo(canvas.width/2 + 10, LAYERS.linerBottom);
+                let cx = canvas.width / 2;
+                ctx.moveTo(cx - 20, layers.waste);
+                ctx.lineTo(cx + 10, layers.waste + 20);
+                ctx.lineTo(cx - 5, layers.waste + 40);
+                ctx.lineTo(cx + 30, layers.liner);
                 ctx.stroke();
+
+                // Toxic glow around crack
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#ef4444';
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
             }
 
-            // Groundwater
-            ctx.fillStyle = '#0891b2';
-            ctx.fillRect(0, LAYERS.linerBottom, canvas.width, canvas.height - LAYERS.linerBottom);
+            // Groundwater Aquifer
+            let waterColor = state.groundwaterContaminated ? '#450a0a' : '#0891b2'; // Turns red/black if contaminated
+            ctx.fillStyle = waterColor;
+            ctx.fillRect(0, layers.liner, canvas.width, canvas.height - layers.liner);
+
+            // Draw text labels
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = 'bold 16px Inter';
+            ctx.fillText("Precipitation Zone", 20, 30);
+            ctx.fillText("Municipal Solid Waste (Leachate Generation)", 20, layers.sky + 30);
+            ctx.fillText("Engineered Liner", 20, layers.waste + 25);
+            ctx.fillText("Groundwater Aquifer", 20, layers.liner + 30);
         }
 
+        // --- Main Animation Loop ---
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawEnvironment();
+            const layers = getLayers();
+            
+            drawEnvironment(layers);
 
-            // Spawn Particles
-            if (isRaining) {
-                let spawnRate = isHeavyRain ? 8 : 2;
-                for(let i=0; i<spawnRate; i++) {
-                    particles.push(new Particle());
+            // 1. Spawning Logic
+            // Weather Rain
+            if (state.weather === 'light' && Math.random() < 0.2) particles.push(new Particle(false, 0));
+            if (state.weather === 'storm' && Math.random() < 0.8) {
+                particles.push(new Particle(false, 0));
+                particles.push(new Particle(false, 0));
+                particles.push(new Particle(false, 0)); // Heavy downpour
+            }
+
+            // Natural Decomposition (Spawn deep inside waste layer)
+            if (Math.random() < 0.05) { // Slow, constant generation
+                let spawnY = layers.sky + Math.random() * (layers.waste - layers.sky - 20);
+                // 1 in 10 natural particles is a heavy metal
+                let isMetal = Math.random() < 0.1;
+                particles.push(new Particle(isMetal, spawnY));
+            }
+
+            // 2. Physics Failure Check (Hydraulic Head)
+            if (!state.isRuptured && !state.drainage && state.liner !== 'high_perm') {
+                let threshold = state.liner === 'optimal' ? limits.optimal_max_head : limits.brittle_max_head;
+                if (state.pressurePool > threshold) {
+                    state.isRuptured = true;
+                    updateStatus();
                 }
             }
 
-            // Physics Check: Hydraulic Head Failure
-            if (pooledLeachate > MAX_HEAD_PRESSURE && !linerFailed) {
-                linerFailed = true;
-                updateStatus();
-            }
-
-            // Update UI Data
-            let headMeters = (pooledLeachate / 50).toFixed(1);
-            headDisplay.textContent = headMeters + " m";
-            if (headMeters > 3) headDisplay.style.color = "#ef4444";
-            else headDisplay.style.color = "#fff";
-
-            // Process Particles
+            // 3. Update & Draw Particles
             for (let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
-                p.update();
+                p.update(layers);
                 p.draw();
                 if (p.dead) particles.splice(i, 1);
             }
@@ -480,8 +551,10 @@
             requestAnimationFrame(animate);
         }
 
+        // Start Simulator
         updateStatus();
         animate();
+
     </script>
 </body>
 </html>
