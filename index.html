@@ -8,8 +8,9 @@
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;700&family=Poppins:wght@400;500;600&display=swap');
 
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.04);
             --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-highlight: rgba(255, 255, 255, 0.3);
             --glass-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             
             --text-light: #ffffff;
@@ -36,8 +37,9 @@
             transition: background 2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* Improved Theme Contrast for Rain Visibility */
         body.theme-none { background: linear-gradient(135deg, #0f172a, #1e293b, #020617); }
-        body.theme-light { background: linear-gradient(135deg, #082f49, #0ea5e9, #0284c7); }
+        body.theme-light { background: linear-gradient(135deg, #0f172a, #1c3d5a, #0b1f38); }
         body.theme-storm { background: linear-gradient(135deg, #1e1b4b, #312e81, #0f172a); }
 
         @keyframes fluidBg {
@@ -121,6 +123,32 @@
             font-weight: 600;
         }
 
+        /* Microscopic Pore Viewer */
+        .pore-viewer-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+        .pore-canvas-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            overflow: hidden;
+            background: #292524;
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        .pore-canvas-wrapper canvas { width: 100%; height: 100%; display: block;}
+        .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; color: #fff; }
+        .pore-info p { margin: 0; font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;}
+
         .status-box {
             margin-top: auto;
             background: rgba(0,0,0,0.25);
@@ -141,23 +169,22 @@
         }
         canvas#simCanvas { width: 100%; height: 100%; display: block; }
 
-        /* Liquid Glass Transparent Legend */
+        /* Liquid Glass Transparent Legend in the Corner */
         .legend-overlay {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 24px;
             right: 24px;
-            padding: 20px 24px;
-            background: rgba(255, 255, 255, 0.05); /* Highly transparent */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.03); /* Highly transparent */
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.05);
             z-index: 20;
         }
-        .legend-overlay h4 { margin: 0 0 12px 0; font-size: 0.9rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
-        .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.9); font-weight: 500;}
+        .legend-overlay h4 { margin: 0 0 12px 0; font-size: 0.85rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
+        .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.9); font-weight: 500;}
         .legend-item:last-child { margin-bottom: 0;}
         .color-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; flex-shrink: 0;}
 
@@ -194,7 +221,18 @@
                 </div>
             </div>
 
-            <div class="control-group">
+            <!-- MICROSCOPIC PORE VIEWER -->
+            <div class="pore-viewer-container">
+                <div class="pore-canvas-wrapper">
+                    <canvas id="poreCanvas" width="100" height="100"></canvas>
+                </div>
+                <div class="pore-info">
+                    <h4 id="pore-title">Optimum Compaction</h4>
+                    <p id="pore-desc">Bentonite expands to fill all soil voids. Forms an impermeable barrier.</p>
+                </div>
+            </div>
+
+            <div class="control-group" style="margin-top: 8px;">
                 <h3>Quad-Drain System (LCS)</h3>
                 <div class="btn-grid two-col" id="drain-btns">
                     <button class="active" data-val="open">Open (Flowing)</button>
@@ -222,7 +260,8 @@
             
             <div class="legend-overlay">
                 <h4>Contaminant Profile</h4>
-                <div class="legend-item"><div class="color-dot" style="color: #38bdf8; background: #38bdf8;"></div> Clean Water</div>
+                <!-- Replaced Solid Blue with Transparent Water Color -->
+                <div class="legend-item"><div class="color-dot" style="color: rgba(125, 211, 252, 0.9); background: rgba(125, 211, 252, 0.9);"></div> Clean Water 💧</div>
                 <div class="legend-item"><div class="color-dot" style="color: #c084fc; background: #c084fc;"></div> Heavy Metals</div>
                 <div class="legend-item"><div class="color-dot" style="color: #34d399; background: #34d399;"></div> Organics (BOD)</div>
                 <div class="legend-item"><div class="color-dot" style="color: #facc15; background: #facc15;"></div> Inorg. Salts</div>
@@ -236,6 +275,10 @@
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
         const container = document.getElementById('canvas-container');
+        
+        const pCanvas = document.getElementById('poreCanvas');
+        const pCtx = pCanvas.getContext('2d');
+        
         const bgCanvas = document.createElement('canvas');
         const bgCtx = bgCanvas.getContext('2d');
 
@@ -254,30 +297,32 @@
             geo = {
                 groundLevel: ch * 0.35,      
                 hillPeak: ch * 0.10,         
-                hillLeft: cw * 0.20,
-                hillRight: cw * 0.80,
+                hillLeft: cw * 0.15,
+                hillRight: cw * 0.85,
                 hillCenter: cw * 0.50,
                 pitTopLeft: cw * 0.25,
                 pitTopRight: cw * 0.75,
-                // Widened the bottom pit base slightly to catch all particles
-                pitBotLeft: cw * 0.30,
-                pitBotRight: cw * 0.70,
-                // Significantly thickened the engineered liner
-                linerTop: ch * 0.60,         
+                pitBotLeft: cw * 0.35,
+                pitBotRight: cw * 0.65,
+                linerTop: ch * 0.68,         // Reduced Y-thickness (thinner layer)
                 quarryBottom: ch * 0.75,     
                 deepAquifer: ch * 0.85       
             };
 
-            // Calculate 4 evenly spaced drains across the wider bottom
-            let pitWidth = geo.pitBotRight - geo.pitBotLeft;
+            // Calculate the 4 drains spanning the width of the pit at the liner level
+            let lWall = getPitLeftBoundary(geo.linerTop);
+            let rWall = getPitRightBoundary(geo.linerTop);
+            let pWidth = rWall - lWall;
+            
             drains = [
-                geo.pitBotLeft + pitWidth * 0.1,
-                geo.pitBotLeft + pitWidth * 0.36,
-                geo.pitBotLeft + pitWidth * 0.64,
-                geo.pitBotLeft + pitWidth * 0.9
+                lWall + pWidth * 0.15,
+                lWall + pWidth * 0.38,
+                lWall + pWidth * 0.62,
+                lWall + pWidth * 0.85
             ];
 
             drawStaticBackground();
+            updatePoreViewer();
         }
         window.addEventListener('resize', resize);
 
@@ -303,6 +348,7 @@
                     if (stateKey === 'liner') {
                         state.linerFailed = false;
                         drawStaticBackground(); 
+                        updatePoreViewer();
                     }
                     if(callback) callback();
                 });
@@ -369,20 +415,69 @@
                 box.style.borderLeftColor = "var(--accent-green)";
             }
 
+            // Time-based Remediation: Dynamic Aquifer Cleaning
             if (state.contamination > 0) {
+                // If the liner is fixed and drains are open, aquifer naturally sweeps toxins away
                 let recoveryRate = (state.gwFlow === 'flowing') ? 3.0 : 0.05;
                 state.contamination -= recoveryRate;
                 if (state.contamination < 0) state.contamination = 0;
             }
         }
 
+        // --- Microscopic Pore Viewer Render ---
+        function updatePoreViewer() {
+            pCtx.clearRect(0, 0, 100, 100);
+            const title = document.getElementById('pore-title');
+            const desc = document.getElementById('pore-desc');
+
+            // Draw Base Soil Grains
+            pCtx.fillStyle = '#b45309'; 
+            for(let y=10; y<=90; y+=25) {
+                for(let x=(y%50===10?10:25); x<=90; x+=30) {
+                    pCtx.beginPath(); pCtx.arc(x, y, 12, 0, Math.PI*2); pCtx.fill();
+                }
+            }
+
+            if (state.liner === 'natural') {
+                title.textContent = "Natural Soil (High Voids)";
+                desc.textContent = "Large gaps match native soil. Leachate percolates directly to bedrock.";
+            } 
+            else if (state.liner === 'compacted') {
+                title.textContent = "Optimum Compaction";
+                desc.textContent = "Bentonite expands to fill all soil voids. Forms an impermeable barrier.";
+                // Fill voids with bentonite
+                pCtx.fillStyle = 'rgba(87, 83, 78, 0.85)';
+                for(let y=10; y<=90; y+=25) {
+                    for(let x=(y%50===10?25:10); x<=90; x+=30) {
+                        pCtx.beginPath(); pCtx.arc(x, y, 10, 0, Math.PI*2); pCtx.fill();
+                    }
+                }
+            } 
+            else if (state.liner === 'damaged') {
+                title.textContent = "Desiccation Cracking";
+                desc.textContent = "Brittle liner forms structural cracks, allowing massive leakage.";
+                pCtx.fillStyle = 'rgba(87, 83, 78, 0.85)';
+                pCtx.fillRect(0,0,100,100);
+                
+                // Jagged Cracks
+                pCtx.strokeStyle = '#000'; pCtx.lineWidth = 4;
+                pCtx.beginPath();
+                pCtx.moveTo(20, 0); pCtx.lineTo(40, 30); pCtx.lineTo(30, 60); pCtx.lineTo(60, 100);
+                pCtx.stroke();
+                pCtx.beginPath();
+                pCtx.moveTo(70, 0); pCtx.lineTo(60, 40); pCtx.lineTo(80, 80);
+                pCtx.stroke();
+            }
+        }
+
         function drawStaticBackground() {
             bgCtx.clearRect(0, 0, cw, ch);
             
-            // Native Soil
+            // 1. Native Soil
             bgCtx.fillStyle = '#452c1e'; 
             bgCtx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
 
+            // Native Soil Pores
             bgCtx.fillStyle = 'rgba(0,0,0,0.3)';
             for(let y = geo.groundLevel + 10; y < ch; y += 22) {
                 for(let x = 10; x < cw; x += 26) {
@@ -391,7 +486,7 @@
                 }
             }
 
-            // Landfill Site Shape
+            // 2. Landfill Site
             bgCtx.fillStyle = '#292524'; 
             bgCtx.beginPath();
             bgCtx.moveTo(geo.hillLeft, geo.groundLevel);
@@ -403,49 +498,60 @@
             bgCtx.lineTo(geo.pitTopLeft, geo.groundLevel);
             bgCtx.fill();
 
+            // Waste Texture
             bgCtx.fillStyle = 'rgba(255,255,255,0.03)';
             for(let i=0; i<150; i++) {
                 bgCtx.fillRect(geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft), geo.groundLevel + Math.random() * (geo.linerTop - geo.groundLevel), 5, 5);
             }
 
-            // Thickened Engineered Liner
+            // 3. Engineered Liner (Extends slightly past pit walls to catch all particles)
+            let lWall = getPitLeftBoundary(geo.linerTop);
+            let rWall = getPitRightBoundary(geo.linerTop);
+            let lBot = getPitLeftBoundary(geo.quarryBottom);
+            let rBot = getPitRightBoundary(geo.quarryBottom);
+
             let linerColor = '#57534e'; 
             if (state.liner === 'natural') linerColor = '#b45309'; 
             if (state.liner === 'damaged') linerColor = '#44403c'; 
             
             bgCtx.fillStyle = linerColor;
             bgCtx.beginPath();
-            bgCtx.moveTo(geo.pitBotLeft, geo.linerTop);
-            bgCtx.lineTo(geo.pitBotRight, geo.linerTop);
-            bgCtx.lineTo(geo.pitBotRight, geo.quarryBottom);
-            bgCtx.lineTo(geo.pitBotLeft, geo.quarryBottom);
+            // Extending X bounds by 15px to guarantee no edge clipping
+            bgCtx.moveTo(lWall - 15, geo.linerTop);
+            bgCtx.lineTo(rWall + 15, geo.linerTop);
+            bgCtx.lineTo(rBot + 15, geo.quarryBottom);
+            bgCtx.lineTo(lBot - 15, geo.quarryBottom);
             bgCtx.fill();
 
+            // Dynamic Pores in the Liner based on condition
             if (state.liner === 'natural') {
-                bgCtx.fillStyle = 'rgba(0,0,0,0.4)';
+                // Large empty pores matching native soil
+                bgCtx.fillStyle = 'rgba(0,0,0,0.3)';
                 for(let y = geo.linerTop + 10; y < geo.quarryBottom; y += 18) {
-                    for(let x = geo.pitBotLeft + 15; x < geo.pitBotRight - 10; x += 22) {
-                        bgCtx.beginPath(); bgCtx.arc(x + (y%36===10?11:0), y, 7, 0, Math.PI*2); bgCtx.fill();
+                    for(let x = lWall; x < rWall; x += 22) {
+                        bgCtx.beginPath(); bgCtx.arc(x + (y%36===10?11:0), y, 6, 0, Math.PI*2); bgCtx.fill();
                     }
                 }
             } else if (state.liner === 'compacted') {
+                // Tiny filled bentonite pores
                 bgCtx.fillStyle = 'rgba(255,255,255,0.06)';
-                for(let y = geo.linerTop + 8; y < geo.quarryBottom; y += 12) {
-                    for(let x = geo.pitBotLeft + 10; x < geo.pitBotRight - 5; x += 15) {
-                        bgCtx.beginPath(); bgCtx.arc(x + (y%24===8?7:0), y, 3, 0, Math.PI*2); bgCtx.fill();
+                for(let y = geo.linerTop + 6; y < geo.quarryBottom; y += 10) {
+                    for(let x = lWall; x < rWall; x += 15) {
+                        bgCtx.beginPath(); bgCtx.arc(x + (y%20===6?7:0), y, 3, 0, Math.PI*2); bgCtx.fill();
                     }
                 }
             } else if (state.liner === 'damaged') {
+                // Mix of pores and cracks
                 bgCtx.fillStyle = 'rgba(0,0,0,0.5)';
                 for(let y = geo.linerTop + 10; y < geo.quarryBottom; y += 20) {
-                    for(let x = geo.pitBotLeft + 20; x < geo.pitBotRight - 10; x += 30) {
+                    for(let x = lWall + 20; x < rWall - 10; x += 30) {
                         bgCtx.beginPath(); bgCtx.arc(x, y, 5, 0, Math.PI*2); bgCtx.fill();
                     }
                 }
                 bgCtx.strokeStyle = '#000'; bgCtx.lineWidth = 4;
                 bgCtx.beginPath();
-                bgCtx.moveTo(geo.pitBotLeft + 40, geo.linerTop); bgCtx.lineTo(geo.pitBotLeft + 30, geo.quarryBottom);
-                bgCtx.moveTo(geo.pitBotRight - 40, geo.linerTop); bgCtx.lineTo(geo.pitBotRight - 35, geo.quarryBottom);
+                bgCtx.moveTo(lWall + 40, geo.linerTop); bgCtx.lineTo(lWall + 30, geo.quarryBottom);
+                bgCtx.moveTo(rWall - 40, geo.linerTop); bgCtx.lineTo(rWall - 35, geo.quarryBottom);
                 bgCtx.moveTo(geo.hillCenter, geo.linerTop); bgCtx.lineTo(geo.hillCenter + 10, geo.quarryBottom);
                 bgCtx.stroke();
             }
@@ -462,7 +568,7 @@
             bgCtx.fillStyle = 'rgba(255,255,255,0.7)';
             bgCtx.font = '600 13px Poppins';
             bgCtx.fillText("Landfill Site", geo.hillLeft + 20, geo.hillPeak + 20);
-            bgCtx.fillText("Thick Engineered Liner", geo.pitTopLeft + 30, geo.linerTop + 20);
+            bgCtx.fillText("Engineered Liner", geo.pitTopLeft - 10, geo.linerTop + 18);
             bgCtx.fillText("Deep Native Soil", 15, geo.quarryBottom + 20);
             bgCtx.fillText("Deep Aquifer", 15, geo.deepAquifer + 20);
         }
@@ -473,15 +579,14 @@
             return geo.groundLevel;
         }
 
-        // Added slight tolerance to exact boundary to ensure all particles are captured
         function getPitLeftBoundary(y) {
             if (y < geo.groundLevel) return geo.pitTopLeft;
-            return (geo.pitTopLeft + ((y - geo.groundLevel) / (geo.quarryBottom - geo.groundLevel)) * (geo.pitBotLeft - geo.pitTopLeft)) - 10;
+            return geo.pitTopLeft + ((y - geo.groundLevel) / (geo.quarryBottom - geo.groundLevel)) * (geo.pitBotLeft - geo.pitTopLeft);
         }
 
         function getPitRightBoundary(y) {
             if (y < geo.groundLevel) return geo.pitTopRight;
-            return (geo.pitTopRight - ((y - geo.groundLevel) / (geo.quarryBottom - geo.groundLevel)) * (geo.pitTopRight - geo.pitBotRight)) + 10;
+            return geo.pitTopRight - ((y - geo.groundLevel) / (geo.quarryBottom - geo.groundLevel)) * (geo.pitTopRight - geo.pitBotRight);
         }
 
         function getRandomToxin() {
@@ -503,7 +608,8 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = 2.5;
-                this.color = '#38bdf8'; 
+                // Transparent Fresh Water
+                this.color = 'rgba(125, 211, 252, 0.8)'; 
                 this.isContaminant = false;
                 this.alpha = 1.0;
                 this.inAquifer = false;
@@ -518,14 +624,17 @@
                 let pRight = getPitRightBoundary(this.y);
 
                 if (this.y < surfY) { /* Falling */ } 
-                else if (this.y >= surfY && this.y < geo.linerTop && this.x > pLeft && this.x < pRight) {
+                else if (this.y >= surfY && this.y < geo.linerTop) {
+                    // Strict Clamp: Prevent particles escaping the landfill cone
+                    this.x = Math.max(pLeft + 5, Math.min(this.x, pRight - 5));
+
                     if (!this.isContaminant) {
                         this.color = getRandomToxin();
                         this.isContaminant = true;
                     }
                     
-                    // Meandering logic mixed with vector routing towards drains
-                    if (state.drain === 'open' && state.liner === 'compacted' && this.y > geo.linerTop - 60 && !state.linerFailed) {
+                    // Vector Routing towards the nearest of the 4 Drains
+                    if (state.drain === 'open' && state.liner === 'compacted' && this.y > geo.linerTop - 50 && !state.linerFailed) {
                         let closestDrain = drains[0];
                         let minDist = Math.abs(this.x - drains[0]);
                         for(let i=1; i<drains.length; i++) {
@@ -534,21 +643,26 @@
                         }
                         
                         let dir = Math.sign(closestDrain - this.x);
-                        // Meander while generally heading to the drain
-                        this.vx = (dir * 1.5) + ((Math.random() - 0.5) * 1.5);
-                        this.vy = 0.5 + Math.random(); 
+                        // Add meandering while actively seeking drain
+                        this.vx = (dir * 1.8) + ((Math.random() - 0.5) * 1.2);
+                        this.vy = 1.0 + Math.random(); 
                     } else {
-                        this.vx = (Math.random() - 0.5) * 1.2;
+                        // Regular Percolation meandering
+                        this.vx = (Math.random() - 0.5) * 1.5;
                         this.vy = 1.5;
                     }
                 }
-                else if (this.y >= geo.linerTop && this.y < geo.quarryBottom && this.x > pLeft && this.x < pRight) {
+                else if (this.y >= geo.linerTop && this.y < geo.quarryBottom) {
+                    // Ensure particles stay clamped within liner
+                    this.x = Math.max(pLeft - 10, Math.min(this.x, pRight + 10));
+
                     if (state.liner === 'natural' || state.liner === 'damaged' || state.linerFailed) {
                         this.vy = 2.5; 
                         this.vx = (Math.random() - 0.5); 
                     } else {
                         if (state.drain === 'open') {
-                            let nearDrain = drains.some(dx => Math.abs(this.x - dx) < 25);
+                            // High suction radius for the 4 drains
+                            let nearDrain = drains.some(dx => Math.abs(this.x - dx) < 30);
                             if (nearDrain) {
                                 this.dead = true; 
                             } else {
@@ -563,13 +677,14 @@
                 }
                 else if (this.y >= geo.quarryBottom && this.y < geo.deepAquifer) {
                     this.vy = 2; 
-                    this.vx = (Math.random() - 0.5); // Meander through soil
+                    this.vx = (Math.random() - 0.5); 
                 }
                 else if (this.y >= geo.deepAquifer) {
                     if (!this.inAquifer) {
                         this.inAquifer = true;
                         if (this.isContaminant && this.alpha === 1.0) state.contamination += 8; 
                         
+                        // Deep Aquifer Travel Physics
                         this.vy = 0.2 + Math.random() * 0.5; 
                         this.vx = (state.gwFlow === 'flowing') ? (3.5 + Math.random() * 2) : ((Math.random() - 0.5) * 0.8);
                     }
@@ -600,9 +715,13 @@
             let spawnRate = (state.weather === 'light') ? 2 : (state.weather === 'storm') ? 6 : 0;
             if (particles.length < MAX_PARTICLES) {
                 for(let i=0; i<spawnRate; i++) if(Math.random() > 0.2) particles.push(new Particle(0));
+                
+                // Natural moisture generation deep inside waste
                 if (Math.random() < 0.1) {
                     let p = new Particle(geo.groundLevel + Math.random() * (geo.linerTop - geo.groundLevel));
-                    p.x = geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft);
+                    let pLeft = getPitLeftBoundary(p.y);
+                    let pRight = getPitRightBoundary(p.y);
+                    p.x = pLeft + 10 + Math.random() * (pRight - pLeft - 20);
                     p.color = getRandomToxin(); p.isContaminant = true;
                     particles.push(p);
                 }
@@ -625,8 +744,11 @@
                 let rightEdge = getPitRightBoundary(poolY);
                 ctx.moveTo(leftEdge, poolY);
                 ctx.lineTo(rightEdge, poolY);
-                ctx.lineTo(geo.pitBotRight, geo.linerTop);
-                ctx.lineTo(geo.pitBotLeft, geo.linerTop);
+                // Draw pool mapping to the liner
+                let rWall = getPitRightBoundary(geo.linerTop);
+                let lWall = getPitLeftBoundary(geo.linerTop);
+                ctx.lineTo(rWall, geo.linerTop);
+                ctx.lineTo(lWall, geo.linerTop);
                 ctx.fill();
 
                 if (state.drain === 'open' && !state.linerFailed) {
@@ -641,6 +763,7 @@
                     state.poolVolume -= 3.0; 
                     if (state.poolVolume < 0) state.poolVolume = 0;
                     
+                    // Visual Rupture Dump
                     ctx.fillStyle = '#991b1b';
                     ctx.fillRect(geo.hillCenter - 30, geo.linerTop, 60, geo.deepAquifer - geo.linerTop);
                     state.contamination += 40; 
@@ -658,6 +781,7 @@
                 ctx.stroke();
             }
 
+            // Deep Aquifer Visuals
             let aqColor = '#0284c7'; 
             if(state.contamination > 1000) aqColor = 'rgba(153, 27, 27, 0.9)'; 
             else if(state.contamination > 100) {
@@ -668,6 +792,7 @@
             ctx.fillStyle = aqColor;
             ctx.fillRect(0, geo.deepAquifer, cw, ch - geo.deepAquifer);
 
+            // Flowing Waves
             state.time += (state.gwFlow === 'flowing') ? 0.08 : 0.015;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
             for(let j=1; j<=2; j++) {
