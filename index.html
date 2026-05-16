@@ -8,14 +8,13 @@
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;700&family=Poppins:wght@400;500;600&display=swap');
 
         :root {
-            /* iOS Liquid Glass Constants */
-            --glass-bg: rgba(255, 255, 255, 0.04);
+            /* Optimized Liquid Glass Constants */
+            --glass-bg: rgba(30, 41, 59, 0.6); /* Slightly more opaque to compensate for less blur */
             --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-highlight: rgba(255, 255, 255, 0.3);
-            --glass-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             
             --text-light: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.65);
+            --text-muted: rgba(255, 255, 255, 0.7);
             
             --accent-blue: #38bdf8;
             --accent-green: #34d399;
@@ -35,10 +34,9 @@
             box-sizing: border-box;
             overflow: hidden;
             background-size: 200% 200%;
-            transition: background 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: background 1.5s ease-out;
         }
 
-        /* Improved High-Contrast Backgrounds */
         body.theme-none { background: linear-gradient(135deg, #0f172a, #1e293b, #020617); }
         body.theme-light { background: linear-gradient(135deg, #1e293b, #334155, #0f172a); } 
         body.theme-storm { background: linear-gradient(135deg, #1e1b4b, #312e81, #0f172a); }
@@ -61,13 +59,14 @@
 
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(35px) saturate(180%);
-            -webkit-backdrop-filter: blur(35px) saturate(180%);
+            /* PERFORMANCE FIX: Reduced blur from 35px to 10px to stop GPU lag */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             border-top: 1px solid rgba(255,255,255,0.25);
             border-left: 1px solid rgba(255,255,255,0.2);
             border-radius: 30px;
-            box-shadow: var(--glass-shadow), inset 0 0 20px rgba(255,255,255,0.02);
+            box-shadow: var(--glass-shadow);
         }
 
         .controls-panel {
@@ -91,14 +90,14 @@
 
         .control-group { margin-bottom: 2px; }
         .control-group h3 { margin: 0 0 8px 0; font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px;}
-        .control-group h3::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 8px var(--accent-blue);}
+        .control-group h3::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%; }
 
         .btn-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .btn-grid.two-col { grid-template-columns: 1fr 1fr; }
 
         button {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             color: var(--text-muted);
             padding: 10px 14px;
             border-radius: 14px;
@@ -106,25 +105,24 @@
             font-family: inherit;
             font-size: 0.8rem;
             font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.2s ease;
             text-align: left;
         }
 
         button:hover { 
-            background: rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.15); 
             color: var(--text-light); 
-            transform: translateY(-1px);
         }
         button.active { 
-            background: rgba(255, 255, 255, 0.15); 
-            border-color: rgba(255,255,255,0.3); 
+            background: rgba(56, 189, 248, 0.2); 
+            border-color: var(--accent-blue); 
             color: #fff; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.5);
             font-weight: 600;
         }
 
         .pore-viewer-container {
-            background: rgba(0,0,0,0.3);
+            /* PERFORMANCE FIX: Solid translucent color, no blur */
+            background: rgba(15, 23, 42, 0.6);
             border-radius: 16px;
             padding: 12px;
             border: 1px solid rgba(255,255,255,0.08);
@@ -141,7 +139,6 @@
             overflow: hidden;
             background: #292524;
             flex-shrink: 0;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         }
         .pore-canvas-wrapper canvas { width: 100%; height: 100%; display: block;}
         .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; color: #fff; }
@@ -149,16 +146,17 @@
 
         .status-box {
             margin-top: auto;
-            background: rgba(0,0,0,0.25);
+            /* PERFORMANCE FIX: Solid translucent color, no blur */
+            background: rgba(15, 23, 42, 0.7);
             border-radius: 20px;
             padding: 16px;
             border: 1px solid rgba(255,255,255,0.08);
             border-left: 6px solid var(--accent-green);
-            transition: border-color 0.4s ease;
+            transition: border-color 0.3s ease;
         }
         .status-box div { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;}
         .status-box div:last-child { margin-bottom: 0; }
-        .status-val { font-weight: 700; font-family: monospace; font-size: 0.95rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .status-val { font-weight: 700; font-family: monospace; font-size: 0.95rem; }
 
         .simulation-area {
             flex: 3;
@@ -167,25 +165,23 @@
         }
         canvas#simCanvas { width: 100%; height: 100%; display: block; }
 
-        /* Liquid Glass Transparent Legend in the Right Center */
         .legend-overlay {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             right: 24px;
             padding: 18px 24px;
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(25px) saturate(150%);
-            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            /* PERFORMANCE FIX: Solid translucent color, no blur */
+            background: rgba(15, 23, 42, 0.85); 
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             z-index: 20;
         }
         .legend-overlay h4 { margin: 0 0 12px 0; font-size: 0.85rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
         .legend-item { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.9); font-weight: 500;}
         .legend-item:last-child { margin-bottom: 0;}
-        .color-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; flex-shrink: 0;}
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;}
 
         @media (max-width: 1100px) {
             .dashboard { flex-direction: column; height: auto; }
@@ -258,11 +254,11 @@
             
             <div class="legend-overlay">
                 <h4>Contaminant Profile</h4>
-                <div class="legend-item"><div class="color-dot" style="color: rgba(56, 189, 248, 0.9); background: rgba(56, 189, 248, 0.9);"></div> Clean Water 💧</div>
-                <div class="legend-item"><div class="color-dot" style="color: #c084fc; background: #c084fc;"></div> Heavy Metals</div>
-                <div class="legend-item"><div class="color-dot" style="color: #34d399; background: #34d399;"></div> Organics (BOD)</div>
-                <div class="legend-item"><div class="color-dot" style="color: #facc15; background: #facc15;"></div> Inorg. Salts</div>
-                <div class="legend-item"><div class="color-dot" style="color: #fb7185; background: #fb7185;"></div> Acids</div>
+                <div class="legend-item"><div class="color-dot" style="background: rgba(56, 189, 248, 0.8);"></div> Clean Water 💧</div>
+                <div class="legend-item"><div class="color-dot" style="background: #c084fc;"></div> Heavy Metals</div>
+                <div class="legend-item"><div class="color-dot" style="background: #34d399;"></div> Organics (BOD)</div>
+                <div class="legend-item"><div class="color-dot" style="background: #facc15;"></div> Inorg. Salts</div>
+                <div class="legend-item"><div class="color-dot" style="background: #fb7185;"></div> Acids</div>
             </div>
         </div>
     </div>
@@ -275,8 +271,9 @@
         const pCanvas = document.getElementById('poreCanvas');
         const pCtx = pCanvas.getContext('2d');
         
+        // Fast offscreen background
         const bgCanvas = document.createElement('canvas');
-        const bgCtx = bgCanvas.getContext('2d');
+        const bgCtx = bgCanvas.getContext('2d', { alpha: false });
 
         let cw, ch;
         let geo = {}; 
@@ -300,12 +297,11 @@
                 pitTopRight: cw * 0.75,
                 pitBotLeft: cw * 0.35,
                 pitBotRight: cw * 0.65,
-                linerThickness: 12,          // THIN LINER AS REQUESTED
+                linerThickness: 12,          
                 quarryBottom: ch * 0.75,     
                 deepAquifer: ch * 0.85       
             };
 
-            // Drains spaced evenly across the bottom pit
             let pitWidth = geo.pitBotRight - geo.pitBotLeft;
             drains = [
                 geo.pitBotLeft + pitWidth * 0.15,
@@ -408,7 +404,6 @@
                 box.style.borderLeftColor = "var(--accent-green)";
             }
 
-            // Time-based Remediation: Dynamic Aquifer Cleaning
             if (state.contamination > 0) {
                 let recoveryRate = (state.gwFlow === 'flowing') ? 3.0 : 0.05;
                 state.contamination -= recoveryRate;
@@ -458,7 +453,7 @@
             }
         }
 
-        // --- Arrow Drawing Helper ---
+        // Fast Arrow Drawer
         function drawArrow(ctx, fromX, fromY, toX, toY) {
             let headlen = 8; 
             let dx = toX - fromX;
@@ -474,7 +469,9 @@
         }
 
         function drawStaticBackground() {
-            bgCtx.clearRect(0, 0, cw, ch);
+            // Fill background with solid transparent color (simulates the old gradient to avoid clearing issues)
+            bgCtx.fillStyle = '#0f172a';
+            bgCtx.fillRect(0, 0, cw, ch);
             
             // 1. Native Soil
             bgCtx.fillStyle = '#452c1e'; 
@@ -490,7 +487,7 @@
 
             // 2. THIN ENGINEERED LINER (Cement mixed with soil visual)
             let t = geo.linerThickness;
-            let linerColor = 'rgba(150, 145, 140, 0.8)'; // Translucent cement/soil blend
+            let linerColor = 'rgba(150, 145, 140, 0.7)'; // Translucent cement/soil blend
             if (state.liner === 'natural') linerColor = 'rgba(180, 83, 9, 0.8)'; 
             if (state.liner === 'damaged') linerColor = 'rgba(68, 64, 60, 0.9)'; 
             
@@ -503,12 +500,11 @@
             bgCtx.lineTo(geo.pitTopLeft - t, geo.groundLevel);
             bgCtx.fill();
 
-            // Glassy inner highlight stroke for the liner
+            // Glassy inner highlight for liner
             bgCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
             bgCtx.lineWidth = 1.5;
             bgCtx.stroke();
 
-            // Draw Cracks if damaged
             if (state.liner === 'damaged') {
                 bgCtx.strokeStyle = '#000'; bgCtx.lineWidth = 3;
                 bgCtx.beginPath();
@@ -525,19 +521,17 @@
             bgCtx.lineTo(geo.hillCenter, geo.hillPeak);
             bgCtx.lineTo(geo.hillRight, geo.groundLevel);
             bgCtx.lineTo(geo.pitTopRight, geo.groundLevel);
-            // Connect to top of liner wall
             bgCtx.lineTo(geo.pitBotRight, geo.quarryBottom - t);
             bgCtx.lineTo(geo.pitBotLeft, geo.quarryBottom - t);
             bgCtx.lineTo(geo.pitTopLeft, geo.groundLevel);
             bgCtx.fill();
 
-            // Waste Texture
             bgCtx.fillStyle = 'rgba(255,255,255,0.03)';
             for(let i=0; i<200; i++) {
                 bgCtx.fillRect(geo.pitBotLeft - 20 + Math.random() * (geo.pitBotRight - geo.pitBotLeft + 40), geo.groundLevel + Math.random() * (geo.quarryBottom - t - geo.groundLevel), 5, 5);
             }
 
-            // 4. Quad-Drainage Pipes (Inside the bottom of the liner)
+            // 4. Quad-Drainage Pipes
             bgCtx.fillStyle = '#0f172a'; 
             drains.forEach(dx => {
                 bgCtx.beginPath(); bgCtx.arc(dx, geo.quarryBottom - t - 5, 12, 0, Math.PI*2); bgCtx.fill();
@@ -549,38 +543,36 @@
             bgCtx.fillStyle = 'rgba(255,255,255,0.9)';
             bgCtx.font = '600 13px Poppins';
             
-            // Sky
             bgCtx.fillText("Sky / Precipitation Zone", 20, 30);
             
-            // Landfill
             bgCtx.fillText("Landfill", geo.hillLeft + 30, geo.hillPeak + 20);
             bgCtx.strokeStyle = 'rgba(255,255,255,0.7)'; bgCtx.lineWidth = 1.5;
             drawArrow(bgCtx, geo.hillLeft + 80, geo.hillPeak + 25, geo.hillCenter - 40, geo.hillPeak + 40);
 
-            // Engineered Liner
             bgCtx.fillText("Engineered Liner", geo.pitTopLeft - 130, geo.groundLevel + 20);
             drawArrow(bgCtx, geo.pitTopLeft - 25, geo.groundLevel + 15, geo.pitTopLeft - 5, geo.groundLevel + 50);
 
-            // Surrounding Native Soil
             bgCtx.fillText("Surrounding Native Soil", 20, geo.groundLevel + 60);
             drawArrow(bgCtx, 90, geo.groundLevel + 65, 120, geo.quarryBottom - 40);
 
-            // Deep Aquifer
             bgCtx.fillText("Deep Groundwater Aquifer", 20, geo.deepAquifer + 25);
             drawArrow(bgCtx, 190, geo.deepAquifer + 20, 250, geo.deepAquifer + 30);
-        }
-
-        // Core Physics Math
-        function mapRange(val, in_min, in_max, out_min, out_max) {
-            if(val < in_min) return out_min;
-            if(val > in_max) return out_max;
-            return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
 
         function getSurfaceY(x) {
             if (x >= geo.hillLeft && x <= geo.hillCenter) return geo.groundLevel - ((x - geo.hillLeft) / (geo.hillCenter - geo.hillLeft)) * (geo.groundLevel - geo.hillPeak);
             if (x > geo.hillCenter && x <= geo.hillRight) return geo.hillPeak + ((x - geo.hillCenter) / (geo.hillRight - geo.hillCenter)) * (geo.groundLevel - geo.hillPeak);
             return geo.groundLevel;
+        }
+
+        function getPitLeftBoundary(y) {
+            if (y < geo.groundLevel) return geo.pitTopLeft;
+            return (geo.pitTopLeft + ((y - geo.groundLevel) / (geo.quarryBottom - geo.groundLevel)) * (geo.pitBotLeft - geo.pitTopLeft)) - 10;
+        }
+
+        function getPitRightBoundary(y) {
+            if (y < geo.groundLevel) return geo.pitTopRight;
+            return (geo.pitTopRight - ((y - geo.groundLevel) / (geo.quarryBottom - geo.groundLevel)) * (geo.pitTopRight - geo.pitBotRight)) + 10;
         }
 
         function getRandomToxin() {
@@ -591,9 +583,9 @@
             return '#fb7185'; 
         }
 
-        // --- Particle Physics Engine ---
+        // --- Particle Physics Engine (Recycling Pool) ---
         let particles = [];
-        const MAX_PARTICLES = 350; 
+        const MAX_PARTICLES = 300; // Optimal for 60FPS
 
         class Particle {
             constructor() {
@@ -602,12 +594,24 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = 2.5;
-                // Bright, highly visible transparent blue for rain
-                this.color = 'rgba(56, 189, 248, 0.4)'; 
+                this.color = 'rgba(56, 189, 248, 0.4)'; // Transparent Blue Rain
                 this.isContaminant = false;
                 this.alpha = 1.0;
                 this.inAquifer = false;
                 this.voidOffset = Math.random() * Math.PI * 2;
+                this.dead = false;
+            }
+
+            reset() {
+                this.x = Math.random() * cw;
+                this.y = 0;
+                this.vx = 0;
+                this.vy = 4 + Math.random() * 3;
+                this.color = 'rgba(56, 189, 248, 0.4)';
+                this.isContaminant = false;
+                this.alpha = 1.0;
+                this.inAquifer = false;
+                this.dead = false;
             }
 
             update() {
@@ -615,17 +619,15 @@
                 this.y += this.vy;
 
                 let surfY = getSurfaceY(this.x);
-                let pLeft = mapRange(this.y, geo.groundLevel, geo.quarryBottom, geo.pitTopLeft, geo.pitBotLeft);
-                let pRight = mapRange(this.y, geo.groundLevel, geo.quarryBottom, geo.pitTopRight, geo.pitBotRight);
-                let linerInnerBot = geo.quarryBottom - geo.linerThickness;
+                let pLeft = getPitLeftBoundary(this.y);
+                let pRight = getPitRightBoundary(this.y);
 
                 if (this.y < surfY) { 
                     this.vx = 0; 
                 } 
-                else if (this.y >= surfY && this.y < linerInnerBot) {
+                else if (this.y >= surfY && this.y < geo.quarryBottom - geo.linerThickness) {
                     
                     if (this.x > pLeft && this.x < pRight) {
-                        // Strict clamp inside the pit
                         this.x = Math.max(pLeft + 5, Math.min(this.x, pRight - 5));
 
                         if (!this.isContaminant) {
@@ -633,8 +635,7 @@
                             this.isContaminant = true;
                         }
 
-                        // Advanced Meandering routing towards drains
-                        if (state.drain === 'open' && state.liner === 'compacted' && this.y > linerInnerBot - 80 && !state.linerFailed) {
+                        if (state.drain === 'open' && state.liner === 'compacted' && this.y > geo.quarryBottom - 80 && !state.linerFailed) {
                             let closestDrain = drains[0];
                             let minDist = Math.abs(this.x - drains[0]);
                             for(let i=1; i<drains.length; i++) {
@@ -654,14 +655,12 @@
                             this.vy = 1.2;
                         }
                     } else {
-                        // Rain that fell outside the pit (native soil)
                         this.vx = Math.sin((this.y + this.voidOffset) * 0.15) * 1.2;
                         this.vy = 1.5;
                     }
                 }
-                else if (this.y >= linerInnerBot && this.y < geo.deepAquifer) {
+                else if (this.y >= geo.quarryBottom - geo.linerThickness && this.y < geo.deepAquifer) {
                     if (this.x > pLeft - geo.linerThickness && this.x < pRight + geo.linerThickness) {
-                        
                         if (state.liner === 'natural' || state.liner === 'damaged' || state.linerFailed) {
                             this.vy = 2.0; 
                             this.vx = Math.sin(this.y * 0.3 + this.voidOffset) * 1.2; 
@@ -680,7 +679,6 @@
                             }
                         }
                     } else {
-                        // Native soil below ground level
                         this.vy = 1.5;
                         this.vx = Math.sin((this.y + this.voidOffset) * 0.15) * 1.0;
                     }
@@ -712,52 +710,56 @@
             }
         }
 
-        // --- Main Animation Loop ---
+        // Initialize object pool
+        for(let i=0; i<MAX_PARTICLES; i++) {
+            let p = new Particle();
+            p.dead = true; // Start dead
+            particles.push(p);
+        }
+
         function animate() {
             ctx.clearRect(0, 0, cw, ch);
-            ctx.drawImage(bgCanvas, 0, 0);
+            
+            // To make sure transparent water is visible, we don't draw the background to the front canvas anymore.
+            // The canvas is transparent, so the CSS gradient behind it shows through.
 
             let spawnRate = (state.weather === 'light') ? 2 : (state.weather === 'storm') ? 6 : 0;
-            if (particles.length < MAX_PARTICLES) {
-                // Rain falling EVERYWHERE
-                for(let i=0; i<spawnRate; i++) {
-                    particles.push(new Particle());
+            let spawned = 0;
+            
+            for(let i=0; i<particles.length; i++) {
+                if (particles[i].dead) {
+                    if (spawned < spawnRate) {
+                        particles[i].reset();
+                        spawned++;
+                    } else if (Math.random() < 0.02) { 
+                        // Slower internal moisture spawn to save frames
+                        particles[i].reset();
+                        particles[i].y = geo.hillPeak + 20 + Math.random() * (geo.quarryBottom - geo.linerThickness - geo.hillPeak - 40);
+                        let pLeft = getPitLeftBoundary(particles[i].y);
+                        let pRight = getPitRightBoundary(particles[i].y);
+                        particles[i].x = pLeft + 10 + Math.random() * (pRight - pLeft - 20);
+                        particles[i].color = getRandomToxin(); 
+                        particles[i].isContaminant = true;
+                    }
+                } else {
+                    particles[i].update();
+                    particles[i].draw();
                 }
-                
-                // Natural decomposition moisture inside pit
-                if (Math.random() < 0.1) {
-                    let p = new Particle();
-                    let linerInnerBot = geo.quarryBottom - geo.linerThickness;
-                    p.y = geo.hillPeak + 20 + Math.random() * (linerInnerBot - geo.hillPeak - 40);
-                    let pLeft = mapRange(p.y, geo.groundLevel, geo.quarryBottom, geo.pitTopLeft, geo.pitBotLeft);
-                    let pRight = mapRange(p.y, geo.groundLevel, geo.quarryBottom, geo.pitTopRight, geo.pitBotRight);
-                    p.x = pLeft + 10 + Math.random() * (pRight - pLeft - 20);
-                    p.color = getRandomToxin(); p.isContaminant = true;
-                    particles.push(p);
-                }
-            }
-
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                p.update();
-                p.draw();
-                if (p.dead) particles.splice(i, 1);
             }
 
             let linerInnerBot = geo.quarryBottom - geo.linerThickness;
 
-            // Hydraulic Pool Dynamics
             if (state.poolVolume > 0 && state.liner === 'compacted') {
                 let poolY = linerInnerBot - (state.poolVolume * 0.4); 
                 
                 ctx.fillStyle = 'rgba(120, 53, 15, 0.85)';
                 ctx.beginPath();
-                let lEdge = mapRange(poolY, geo.groundLevel, geo.quarryBottom, geo.pitTopLeft, geo.pitBotLeft);
-                let rEdge = mapRange(poolY, geo.groundLevel, geo.quarryBottom, geo.pitTopRight, geo.pitBotRight);
+                let lEdge = getPitLeftBoundary(poolY);
+                let rEdge = getPitRightBoundary(poolY);
                 ctx.moveTo(lEdge, poolY);
                 ctx.lineTo(rEdge, poolY);
-                ctx.lineTo(geo.pitBotRight, linerInnerBot);
-                ctx.lineTo(geo.pitBotLeft, linerInnerBot);
+                ctx.lineTo(getPitRightBoundary(linerInnerBot), linerInnerBot);
+                ctx.lineTo(getPitLeftBoundary(linerInnerBot), linerInnerBot);
                 ctx.fill();
 
                 if (state.drain === 'open' && !state.linerFailed) {
@@ -789,6 +791,7 @@
                 ctx.stroke();
             }
 
+            // Draw Aquifer Over particles
             let aqColor = '#0284c7'; 
             if(state.contamination > 1000) aqColor = 'rgba(153, 27, 27, 0.9)'; 
             else if(state.contamination > 100) {
@@ -811,7 +814,17 @@
             requestAnimationFrame(animate);
         }
 
+        // Initialize
         resize();
+        
+        // Push bgCanvas into DOM to act as a permanent static background behind the animation canvas
+        bgCanvas.style.position = 'absolute';
+        bgCanvas.style.top = '0';
+        bgCanvas.style.left = '0';
+        bgCanvas.style.zIndex = '-1';
+        bgCanvas.style.borderRadius = '24px';
+        container.appendChild(bgCanvas);
+        
         animate();
     </script>
 </body>
