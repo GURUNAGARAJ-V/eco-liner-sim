@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bellahalli Quarry Landfill Simulation - Full Engineering Model</title>
+    <title>Bellahalli Quarry Landfill - Advanced Hydraulic Simulation</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap');
 
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-highlight: rgba(255, 255, 255, 0.25);
-            --glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --glass-bg: rgba(20, 25, 40, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             
             --text-light: #ffffff;
             --text-muted: rgba(255, 255, 255, 0.7);
@@ -25,7 +25,7 @@
 
         body {
             margin: 0;
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Poppins', -apple-system, sans-serif;
             color: var(--text-light);
             display: flex;
             justify-content: center;
@@ -33,14 +33,14 @@
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
-            overflow-x: hidden;
+            overflow: hidden;
             
             background-size: 200% 200%;
             transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body.theme-none { background: linear-gradient(135deg, #1e293b, #0f172a, #334155); }
-        body.theme-light { background: linear-gradient(135deg, #0f172a, #38bdf8, #0369a1); }
+        body.theme-none { background: linear-gradient(135deg, #0f172a, #1e293b, #020617); }
+        body.theme-light { background: linear-gradient(135deg, #0f172a, #0369a1, #0c4a6e); }
         body.theme-storm { background: linear-gradient(135deg, #020617, #312e81, #1e1b4b); }
 
         @keyframes fluidBg {
@@ -52,102 +52,132 @@
 
         .dashboard {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             width: 100%;
             max-width: 1600px;
-            height: 90vh;
+            height: 92vh;
             z-index: 10;
         }
 
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(30px) saturate(150%);
-            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
+            border-radius: 24px;
             box-shadow: var(--glass-shadow);
         }
 
         .controls-panel {
             flex: 1;
-            min-width: 360px;
-            padding: 24px;
+            min-width: 380px;
+            max-width: 420px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 12px;
             overflow-y: auto;
         }
-        .controls-panel::-webkit-scrollbar { width: 0px; }
+        .controls-panel::-webkit-scrollbar { width: 4px; }
+        .controls-panel::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
 
         header h1 { 
             margin: 0; font-size: 1.4rem; font-weight: 700; 
-            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6)); 
+            background: linear-gradient(135deg, #fff, var(--accent-blue)); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        header p { margin: 5px 0 10px 0; font-size: 0.85rem; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;}
+        header p { margin: 4px 0 10px 0; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;}
 
-        .control-group { margin-bottom: 4px; }
-        .control-group h3 { margin: 0 0 8px 0; font-size: 0.8rem; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
-        .control-group h3::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 8px var(--accent-blue);}
+        .control-group { margin-bottom: 2px; }
+        .control-group h3 { margin: 0 0 6px 0; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;}
+        .control-group h3::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%;}
 
         .btn-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
         .btn-grid.two-col { grid-template-columns: 1fr 1fr; }
 
         button {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
             color: var(--text-muted);
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-radius: 12px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.2s;
             text-align: left;
         }
 
-        button:hover { background: rgba(255,255,255,0.15); color: var(--text-light); }
+        button:hover { background: rgba(255,255,255,0.08); color: var(--text-light); }
         button.active { 
-            background: rgba(255, 255, 255, 0.2); 
-            border-color: var(--glass-highlight); 
+            background: rgba(56, 189, 248, 0.15); 
+            border-color: var(--accent-blue); 
             color: #fff; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.4); 
         }
 
+        /* --- Microscopic Pore Viewer --- */
+        .pore-viewer-container {
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        .pore-canvas-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            overflow: hidden;
+            background: #292524;
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        .pore-canvas-wrapper canvas { width: 100%; height: 100%; display: block;}
+        .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; color: #fff; }
+        .pore-info p { margin: 0; font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;}
+
+        /* --- Dynamic Status Box --- */
         .status-box {
             margin-top: auto;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0,0,0,0.3);
             border-radius: 16px;
-            padding: 16px;
+            padding: 14px;
             border: 1px solid var(--glass-border);
             border-left: 5px solid var(--accent-green);
+            transition: border-color 0.3s ease;
         }
-        .status-box div { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;}
+        .status-box div { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.8rem;}
         .status-box div:last-child { margin-bottom: 0; }
-        .status-val { font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .status-val { font-weight: 700; font-family: monospace; font-size: 0.9rem;}
 
         .simulation-area {
             flex: 3;
             position: relative;
             overflow: hidden;
+            border-radius: 24px;
         }
 
-        canvas { width: 100%; height: 100%; display: block; }
+        canvas#simCanvas { width: 100%; height: 100%; display: block; }
 
         .legend-overlay {
             position: absolute;
-            top: 24px;
-            right: 24px;
-            padding: 16px 20px;
+            top: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.7);
         }
-        .legend-overlay h4 { margin: 0 0 10px 0; font-size: 0.85rem; color: #fff; }
-        .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;}
-        .color-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+        .legend-overlay h4 { margin: 0 0 8px 0; font-size: 0.8rem; color: #fff; }
+        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.7rem; color: var(--text-muted); font-weight: 600;}
+        .color-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
 
         @media (max-width: 1100px) {
             .dashboard { flex-direction: column; height: auto; }
-            .simulation-area { height: 600px; }
+            .simulation-area { height: 60vh; }
         }
     </style>
 </head>
@@ -158,7 +188,7 @@
         <div class="controls-panel glass-panel">
             <header>
                 <h1>Bellahalli Site Profile</h1>
-                <p>Hard Rock Quarry Landfill Simulation</p>
+                <p>Advanced Hydraulic Landfill Simulation</p>
             </header>
 
             <div class="control-group">
@@ -171,15 +201,6 @@
             </div>
 
             <div class="control-group">
-                <h3>Soil Cover Strategy</h3>
-                <div class="btn-grid" id="cover-btns">
-                    <button class="active" data-val="daily">Daily Cover (15cm / Permeable)</button>
-                    <button data-val="inter">Intermediate Cover (45cm)</button>
-                    <button data-val="final">Final Cap (2m / Impermeable)</button>
-                </div>
-            </div>
-
-            <div class="control-group">
                 <h3>Engineered Liner Material</h3>
                 <div class="btn-grid" id="liner-btns">
                     <button data-val="natural">Natural Soil (High Voids)</button>
@@ -188,11 +209,22 @@
                 </div>
             </div>
 
-            <div class="control-group">
-                <h3>Quarry Sump Pump (LCS)</h3>
-                <div class="btn-grid two-col" id="pump-btns">
-                    <button class="active" data-val="active">Active Pump</button>
-                    <button data-val="failed">Failed (Pools)</button>
+            <!-- MICROSCOPIC PORE VIEWER -->
+            <div class="pore-viewer-container">
+                <div class="pore-canvas-wrapper">
+                    <canvas id="poreCanvas" width="100" height="100"></canvas>
+                </div>
+                <div class="pore-info">
+                    <h4 id="pore-title">Optimum Compaction</h4>
+                    <p id="pore-desc">Bentonite expands to fill all soil voids. Permeability ($k$) &le; 10⁻⁸ cm/s.</p>
+                </div>
+            </div>
+
+            <div class="control-group" style="margin-top: 8px;">
+                <h3>Gravity Leachate Drain (LCS)</h3>
+                <div class="btn-grid two-col" id="drain-btns">
+                    <button class="active" data-val="open">Open (Hydraulic Flow)</button>
+                    <button data-val="clogged">Clogged (Pools)</button>
                 </div>
             </div>
 
@@ -205,9 +237,9 @@
             </div>
 
             <div class="status-box" id="status-box">
-                <div><span>System Pressure:</span> <span class="status-val" id="st-head" style="color:var(--accent-blue)">Minimal</span></div>
-                <div><span>Bedrock Integrity:</span> <span class="status-val" id="st-integrity" style="color:var(--accent-green)">Intact</span></div>
-                <div><span>Deep Aquifer:</span> <span class="status-val" id="st-purity" style="color:var(--accent-green)">100% Safe</span></div>
+                <div><span>Hydraulic Pressure:</span> <span class="status-val" id="st-head" style="color:var(--accent-blue)">0.0 kPa</span></div>
+                <div><span>Bedrock Integrity:</span> <span class="status-val" id="st-integrity" style="color:var(--accent-green)">STABLE</span></div>
+                <div><span>Deep Aquifer:</span> <span class="status-val" id="st-purity" style="color:var(--accent-green)">SAFE</span></div>
             </div>
         </div>
 
@@ -217,20 +249,28 @@
             
             <div class="legend-overlay glass-panel">
                 <h4>Contaminant Profile</h4>
-                <div class="legend-item"><div class="color-dot" style="color: #38bdf8; background: #38bdf8;"></div> Clean Rain Water 💧</div>
-                <div class="legend-item"><div class="color-dot" style="color: #c084fc; background: #c084fc;"></div> Heavy Metals (Pb, Hg)</div>
-                <div class="legend-item"><div class="color-dot" style="color: #34d399; background: #34d399;"></div> Organics (BOD/COD)</div>
+                <div class="legend-item"><div class="color-dot" style="color: #38bdf8; background: #38bdf8;"></div> Clean Water</div>
+                <div class="legend-item"><div class="color-dot" style="color: #c084fc; background: #c084fc;"></div> Heavy Metals</div>
+                <div class="legend-item"><div class="color-dot" style="color: #34d399; background: #34d399;"></div> Organics (BOD)</div>
                 <div class="legend-item"><div class="color-dot" style="color: #facc15; background: #facc15;"></div> Inorganic Salts</div>
-                <div class="legend-item"><div class="color-dot" style="color: #f87171; background: #f87171;"></div> Acidic Compounds</div>
-                <div class="legend-item"><div class="color-dot" style="color: #22d3ee; background: #22d3ee;"></div> Synthetics / PFAS</div>
+                <div class="legend-item"><div class="color-dot" style="color: #f87171; background: #f87171;"></div> Acids</div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- Setup Canvas ---
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
         const container = document.getElementById('canvas-container');
+
+        // Microscopic Canvas
+        const pCanvas = document.getElementById('poreCanvas');
+        const pCtx = pCanvas.getContext('2d');
+
+        // Offscreen Canvas for Lag-Free Static Background Rendering
+        const bgCanvas = document.createElement('canvas');
+        const bgCtx = bgCanvas.getContext('2d');
 
         let cw, ch;
         let geo = {}; 
@@ -240,6 +280,8 @@
             ch = container.clientHeight;
             canvas.width = cw;
             canvas.height = ch;
+            bgCanvas.width = cw;
+            bgCanvas.height = ch;
             
             geo = {
                 groundLevel: ch * 0.40,      
@@ -251,25 +293,28 @@
                 pitTopRight: cw * 0.75,
                 pitBotLeft: cw * 0.35,
                 pitBotRight: cw * 0.65,
-                linerTop: ch * 0.72,         // Engineered liner sits just above rock bottom
+                linerTop: ch * 0.72,         
                 quarryBottom: ch * 0.75,     
                 deepAquifer: ch * 0.85       
             };
+
+            drawStaticBackground();
         }
         window.addEventListener('resize', resize);
 
+        // --- Application State ---
         const state = {
             weather: 'none',
-            cover: 'daily',
             liner: 'compacted',
-            pump: 'active',
+            drain: 'open',
             gwFlow: 'static',
-            poolVolume: 0,
-            contamination: 0,
+            poolVolume: 0,        // Hydraulic pool size (0 to 100)
+            contamination: 0,     // Toxic load in aquifer
             rockFractured: false,
             time: 0
         };
 
+        // --- Logic & Events ---
         function bindButtons(groupId, stateKey, callback) {
             document.querySelectorAll(`#${groupId} button`).forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -278,71 +323,195 @@
                     state[stateKey] = e.target.dataset.val;
                     
                     if (stateKey === 'weather') document.body.className = `theme-${state.weather}`;
+                    if (stateKey === 'liner') {
+                        state.poolVolume = 0; 
+                        state.rockFractured = false;
+                        drawStaticBackground(); // Redraw liner color
+                        updatePoreViewer();
+                    }
                     if(callback) callback();
                 });
             });
         }
 
         bindButtons('weather-btns', 'weather');
-        bindButtons('cover-btns', 'cover');
-        bindButtons('liner-btns', 'liner', () => { state.poolVolume = 0; state.rockFractured = false; });
-        bindButtons('pump-btns', 'pump');
+        bindButtons('liner-btns', 'liner');
+        bindButtons('drain-btns', 'drain');
         bindButtons('gw-btns', 'gwFlow');
 
+        // --- Fast UI Updates ---
         function updateStatusUI() {
             const elHead = document.getElementById('st-head');
             const elPurity = document.getElementById('st-purity');
             const elIntegrity = document.getElementById('st-integrity');
             const box = document.getElementById('status-box');
 
-            if (state.pump === 'active' && state.liner === 'compacted') {
-                elHead.textContent = "Extracted (Safe)";
-                elHead.style.color = "var(--accent-blue)";
-            } else if (state.liner === 'natural') {
-                elHead.textContent = "Minimal (Leaking)";
+            // Hydraulic Pressure (kPa estimation based on pool volume)
+            let pressure = (state.poolVolume * 1.5).toFixed(1);
+            
+            if (state.liner === 'natural') {
+                elHead.textContent = "0.0 kPa (Leaking)";
                 elHead.style.color = "var(--text-muted)";
             } else {
-                if (state.poolVolume > 300) { elHead.textContent = "CRITICAL HEAD"; elHead.style.color = "var(--accent-red)"; }
-                else if (state.poolVolume > 100) { elHead.textContent = "Filling Quarry"; elHead.style.color = "var(--accent-yellow)"; }
-                else { elHead.textContent = "Pooling at Bottom"; elHead.style.color = "var(--accent-yellow)"; }
+                if (state.rockFractured) {
+                    elHead.textContent = "PRESSURE LOST";
+                    elHead.style.color = "var(--accent-red)";
+                } else if (state.poolVolume > 80) {
+                    elHead.textContent = `${pressure} kPa (CRITICAL)`;
+                    elHead.style.color = "var(--accent-red)";
+                } else if (state.poolVolume > 30) {
+                    elHead.textContent = `${pressure} kPa (Building)`;
+                    elHead.style.color = "var(--accent-yellow)";
+                } else {
+                    elHead.textContent = `${pressure} kPa (Safe)`;
+                    elHead.style.color = "var(--accent-blue)";
+                }
             }
 
             if (state.rockFractured) {
-                elIntegrity.textContent = "ROCK FRACTURED";
+                elIntegrity.textContent = "FRACTURED";
                 elIntegrity.style.color = "var(--accent-red)";
-            } else if (state.liner === 'damaged' || state.liner === 'natural') {
-                elIntegrity.textContent = "Liner Compromised";
+            } else if (state.liner === 'damaged') {
+                elIntegrity.textContent = "COMPROMISED";
+                elIntegrity.style.color = "var(--accent-yellow)";
+            } else if (state.liner === 'natural') {
+                elIntegrity.textContent = "PERMEABLE";
                 elIntegrity.style.color = "var(--accent-yellow)";
             } else {
-                elIntegrity.textContent = "System Intact";
+                elIntegrity.textContent = "STABLE";
                 elIntegrity.style.color = "var(--accent-green)";
             }
 
-            if (state.contamination > 500) {
-                elPurity.textContent = "SEVERE TOXIC PLUME";
+            if (state.contamination > 1000) {
+                elPurity.textContent = "TOXIC";
                 elPurity.style.color = "var(--accent-red)";
                 box.style.borderLeftColor = "var(--accent-red)";
-            } else if (state.contamination > 50) {
-                elPurity.textContent = "Contaminants Detected";
+            } else if (state.contamination > 100) {
+                elPurity.textContent = "CONTAMINATED";
                 elPurity.style.color = "var(--accent-yellow)";
                 box.style.borderLeftColor = "var(--accent-yellow)";
             } else {
-                elPurity.textContent = "Safe / Protected";
+                elPurity.textContent = "SAFE";
                 elPurity.style.color = "var(--accent-green)";
                 box.style.borderLeftColor = "var(--accent-green)";
             }
 
+            // Flowing dispersion logic
             if (state.gwFlow === 'flowing' && state.contamination > 0) {
-                state.contamination -= 1; // Dispersion dilutes local toxins
+                state.contamination -= 2;
+                if (state.contamination < 0) state.contamination = 0;
             }
         }
 
-        function getSurfaceY(x) {
-            if (x >= geo.hillLeft && x <= geo.hillCenter) {
-                return geo.groundLevel - ((x - geo.hillLeft) / (geo.hillCenter - geo.hillLeft)) * (geo.groundLevel - geo.hillPeak);
-            } else if (x > geo.hillCenter && x <= geo.hillRight) {
-                return geo.hillPeak + ((x - geo.hillCenter) / (geo.hillRight - geo.hillCenter)) * (geo.groundLevel - geo.hillPeak);
+        // --- Microscopic Pore Viewer Render ---
+        function updatePoreViewer() {
+            pCtx.clearRect(0, 0, 100, 100);
+            const title = document.getElementById('pore-title');
+            const desc = document.getElementById('pore-desc');
+
+            // Draw Soil Grains (Base)
+            pCtx.fillStyle = '#b45309'; // Brown soil grains
+            for(let y=10; y<=90; y+=25) {
+                for(let x=(y%50===10?10:25); x<=90; x+=30) {
+                    pCtx.beginPath(); pCtx.arc(x, y, 12, 0, Math.PI*2); pCtx.fill();
+                }
             }
+
+            if (state.liner === 'natural') {
+                title.textContent = "Natural Soil (High Voids)";
+                desc.textContent = "Large gaps allow leachate to percolate directly to bedrock.";
+                // Voids remain empty (background color shows through)
+            } 
+            else if (state.liner === 'compacted') {
+                title.textContent = "Optimum Compaction";
+                desc.textContent = "Bentonite swells to block voids. Creates impermeable barrier.";
+                // Draw swollen bentonite (grey) filling the gaps
+                pCtx.fillStyle = 'rgba(87, 83, 78, 0.8)';
+                for(let y=10; y<=90; y+=25) {
+                    for(let x=(y%50===10?25:10); x<=90; x+=30) {
+                        pCtx.beginPath(); pCtx.arc(x, y, 10, 0, Math.PI*2); pCtx.fill();
+                    }
+                }
+            } 
+            else if (state.liner === 'damaged') {
+                title.textContent = "Desiccation Cracking";
+                desc.textContent = "Brittle liner forms structural cracks, rendering it ineffective.";
+                // Draw bentonite, then draw a jagged crack
+                pCtx.fillStyle = 'rgba(87, 83, 78, 0.8)';
+                pCtx.fillRect(0,0,100,100);
+                
+                pCtx.strokeStyle = '#000';
+                pCtx.lineWidth = 4;
+                pCtx.beginPath();
+                pCtx.moveTo(20, 0); pCtx.lineTo(40, 30); pCtx.lineTo(30, 60); pCtx.lineTo(60, 100);
+                pCtx.stroke();
+                pCtx.beginPath();
+                pCtx.moveTo(70, 0); pCtx.lineTo(60, 40); pCtx.lineTo(80, 80);
+                pCtx.stroke();
+            }
+        }
+
+        // --- Fast Static Background Render ---
+        function drawStaticBackground() {
+            bgCtx.clearRect(0, 0, cw, ch);
+            
+            // Shallow Soil
+            bgCtx.fillStyle = '#452c1e'; 
+            bgCtx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
+
+            // Waste Body Shape
+            bgCtx.fillStyle = '#292524'; 
+            bgCtx.beginPath();
+            bgCtx.moveTo(geo.hillLeft, geo.groundLevel);
+            bgCtx.lineTo(geo.hillCenter, geo.hillPeak);
+            bgCtx.lineTo(geo.hillRight, geo.groundLevel);
+            bgCtx.lineTo(geo.pitTopRight, geo.groundLevel);
+            bgCtx.lineTo(geo.pitBotRight, geo.linerTop);
+            bgCtx.lineTo(geo.pitBotLeft, geo.linerTop);
+            bgCtx.lineTo(geo.pitTopLeft, geo.groundLevel);
+            bgCtx.fill();
+
+            // Waste Texture (Rendered ONCE)
+            bgCtx.fillStyle = 'rgba(255,255,255,0.03)';
+            for(let i=0; i<150; i++) {
+                bgCtx.fillRect(geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft), geo.groundLevel + Math.random() * (geo.quarryBottom - geo.groundLevel), 5, 5);
+            }
+
+            // Engineered Liner Layer
+            let linerColor = '#57534e'; // Compacted
+            if (state.liner === 'natural') linerColor = '#92400e'; 
+            if (state.liner === 'damaged') linerColor = '#44403c'; 
+            
+            bgCtx.fillStyle = linerColor;
+            bgCtx.beginPath();
+            bgCtx.moveTo(geo.pitBotLeft, geo.linerTop);
+            bgCtx.lineTo(geo.pitBotRight, geo.linerTop);
+            bgCtx.lineTo(geo.pitBotRight, geo.quarryBottom);
+            bgCtx.lineTo(geo.pitBotLeft, geo.quarryBottom);
+            bgCtx.fill();
+
+            // Hard Rock Bedrock
+            bgCtx.fillStyle = '#27272a'; 
+            bgCtx.fillRect(0, geo.quarryBottom, cw, geo.deepAquifer - geo.quarryBottom);
+
+            // Gravity Drain Pipes (Lateral cuts in the rock)
+            bgCtx.fillStyle = '#0f172a'; // Empty pipe holes
+            bgCtx.beginPath(); bgCtx.arc(geo.pitBotLeft - 10, geo.linerTop + 5, 10, 0, Math.PI*2); bgCtx.fill();
+            bgCtx.beginPath(); bgCtx.arc(geo.pitBotRight + 10, geo.linerTop + 5, 10, 0, Math.PI*2); bgCtx.fill();
+
+            // Labels
+            bgCtx.fillStyle = 'rgba(255,255,255,0.6)';
+            bgCtx.font = '600 11px Poppins';
+            bgCtx.fillText("MSW Hillock", geo.hillLeft + 20, geo.hillPeak + 20);
+            bgCtx.fillText("Engineered Liner", geo.pitTopLeft + 30, geo.linerTop + 15);
+            bgCtx.fillText("Hard Rock Bedrock", 15, geo.quarryBottom + 20);
+            bgCtx.fillText("Deep Aquifer", 15, geo.deepAquifer + 20);
+        }
+
+        // --- Geometry Helpers ---
+        function getSurfaceY(x) {
+            if (x >= geo.hillLeft && x <= geo.hillCenter) return geo.groundLevel - ((x - geo.hillLeft) / (geo.hillCenter - geo.hillLeft)) * (geo.groundLevel - geo.hillPeak);
+            if (x > geo.hillCenter && x <= geo.hillRight) return geo.hillPeak + ((x - geo.hillCenter) / (geo.hillRight - geo.hillCenter)) * (geo.groundLevel - geo.hillPeak);
             return geo.groundLevel;
         }
 
@@ -358,15 +527,15 @@
 
         function getRandomToxin() {
             let r = Math.random();
-            if(r < 0.20) return { color: '#c084fc', type: 'metal' };
-            if(r < 0.40) return { color: '#34d399', type: 'organic' };
-            if(r < 0.60) return { color: '#facc15', type: 'salt' };
-            if(r < 0.80) return { color: '#f87171', type: 'acid' };
-            return { color: '#22d3ee', type: 'pfas' };
+            if(r < 0.2) return '#c084fc'; // Metal
+            if(r < 0.4) return '#34d399'; // Organic
+            if(r < 0.6) return '#facc15'; // Salt
+            return '#f87171'; // Acid
         }
 
+        // --- Particle Physics Engine ---
         let particles = [];
-        const MAX_PARTICLES = 600;
+        const MAX_PARTICLES = 300; // Lower limit keeps it perfectly smooth, logic handles the rest
 
         class Particle {
             constructor(spawnY = 0) {
@@ -375,10 +544,8 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = 2.5;
-                this.color = '#38bdf8';
-                this.type = 'water';
-                this.inPool = false;
-                this.isDraining = false;
+                this.color = '#38bdf8'; // Water
+                this.isContaminant = false;
             }
 
             update() {
@@ -390,78 +557,48 @@
                 let pRight = getPitRightBoundary(this.y);
 
                 // 1. Atmosphere
-                if (this.y < surfY) {
-                    // Falling
-                } 
-                // 2. Cover Layer
-                else if (this.y >= surfY && this.y < surfY + 15 && this.type === 'water') {
-                    if (state.cover === 'final') {
-                        this.vx = (this.x < geo.hillCenter) ? -3 : 3; // Sheds water
-                        this.vy = 2;
-                    } else {
-                        this.vy = (state.cover === 'inter') ? 0.8 : 1.5;
-                        this.vx = (Math.random() - 0.5) * 0.5;
-                    }
-                } 
-                // 3. Waste Body
+                if (this.y < surfY) { /* Falling */ } 
+                // 2. Waste Body (Transforms to Toxin)
                 else if (this.y >= surfY && this.y < geo.linerTop && this.x > pLeft && this.x < pRight) {
-                    if (this.type === 'water') {
-                        let toxin = getRandomToxin();
-                        this.color = toxin.color; this.type = toxin.type;
+                    if (!this.isContaminant) {
+                        this.color = getRandomToxin();
+                        this.isContaminant = true;
                     }
-                    this.vy = 1.2;
-                    this.vx = (Math.random() - 0.5) * 0.8;
+                    this.vy = 1.5;
+                    this.vx = (Math.random() - 0.5);
                 }
-                // 4. Engineered Liner
+                // 3. Liner Interaction
                 else if (this.y >= geo.linerTop && this.y < geo.quarryBottom && this.x > pLeft && this.x < pRight) {
                     if (state.liner === 'natural' || state.liner === 'damaged') {
-                        this.vy = 1; // Breaches liner
-                        if (this.inPool) { state.poolVolume--; this.inPool = false; }
+                        this.vy = 2; // Passes through easily
                     } else {
-                        this.vy = 0; // Blocked by compacted liner
-                        if (state.pump === 'active') {
-                            this.vx = (this.x < geo.hillCenter) ? -2 : 2;
-                            this.y = geo.linerTop + 2;
-                            this.isDraining = true;
-                            if (this.inPool) { state.poolVolume--; this.inPool = false; }
-                        } else {
-                            this.vx = (Math.random() - 0.5) * 0.3;
-                            if (!this.inPool) { state.poolVolume++; this.inPool = true; }
-                            this.y = geo.linerTop - (Math.random() * (state.poolVolume / 8));
-                        }
+                        // Compacted Liner: Particle hits liner and merges into the Pool. 
+                        // **Optimization:** We kill the particle immediately to prevent lag.
+                        state.poolVolume += 0.5;
+                        this.dead = true;
                     }
                 }
-                // 5. Hard Rock Bedrock & Fracture
+                // 4. Hard Rock / Fracture Interaction
                 else if (this.y >= geo.quarryBottom && this.y < geo.deepAquifer) {
                     if (this.x > geo.pitBotLeft && this.x < geo.pitBotRight) {
                         if (state.rockFractured) {
-                            this.vy = 3; this.vx = 0;
-                            if (this.inPool) { state.poolVolume--; this.inPool = false; }
+                            this.vy = 4; // Fast flow through crack
                         } else {
-                            // If it reaches intact rock (e.g. through damaged liner), it pools here until fractured
-                            this.vy = 0;
-                            this.vx = (Math.random() - 0.5) * 0.3;
-                            if (!this.inPool) { state.poolVolume++; this.inPool = true; }
-                            this.y = geo.quarryBottom - (Math.random() * (state.poolVolume / 8));
+                            // Hit solid rock (came through bad liner). Merges into pool here.
+                            state.poolVolume += 0.5;
+                            this.dead = true; 
                         }
                     } else {
                         this.dead = true;
                     }
                 }
-                // 6. Deep Aquifer
+                // 5. Deep Aquifer
                 else if (this.y >= geo.deepAquifer) {
-                    this.vy = 1; 
-                    this.vx = (state.gwFlow === 'flowing') ? (2 + Math.random()) : ((Math.random() - 0.5) * 0.3);
-                    
-                    if (this.type !== 'water') {
-                        state.contamination++;
-                        this.type = 'water';
-                    }
-                    if (this.inPool) { state.poolVolume--; this.inPool = false; }
+                    if (this.isContaminant) state.contamination += 5; // Heavy weight per drop
+                    this.dead = true; // Remove to save rendering
                 }
 
                 if (this.y > ch || this.x < 0 || this.x > cw) this.dead = true;
-                if (this.isDraining && (this.x < geo.pitBotLeft + 20 || this.x > geo.pitBotRight - 20)) this.dead = true;
             }
 
             draw() {
@@ -472,108 +609,27 @@
             }
         }
 
-        function drawEnvironment() {
-            // Shallow Soil
-            ctx.fillStyle = '#452c1e'; 
-            ctx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
-
-            // Waste Body
-            ctx.fillStyle = '#292524'; 
-            ctx.beginPath();
-            ctx.moveTo(geo.hillLeft, geo.groundLevel);
-            ctx.lineTo(geo.hillCenter, geo.hillPeak);
-            ctx.lineTo(geo.hillRight, geo.groundLevel);
-            ctx.lineTo(geo.pitTopRight, geo.groundLevel);
-            ctx.lineTo(geo.pitBotRight, geo.linerTop);
-            ctx.lineTo(geo.pitBotLeft, geo.linerTop);
-            ctx.lineTo(geo.pitTopLeft, geo.groundLevel);
-            ctx.fill();
-
-            // Waste Texture
-            ctx.fillStyle = 'rgba(255,255,255,0.03)';
-            for(let i=0; i<80; i++) {
-                ctx.fillRect(geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft), geo.groundLevel + Math.random() * (geo.quarryBottom - geo.groundLevel), 6, 6);
-            }
-
-            // Engineered Liner
-            let linerColor = '#57534e'; // Compacted
-            if (state.liner === 'natural') linerColor = '#92400e'; // Voids
-            if (state.liner === 'damaged') linerColor = '#44403c'; // Cracks
-            
-            ctx.fillStyle = linerColor;
-            ctx.beginPath();
-            ctx.moveTo(geo.pitBotLeft, geo.linerTop);
-            ctx.lineTo(geo.pitBotRight, geo.linerTop);
-            ctx.lineTo(geo.pitBotRight, geo.quarryBottom);
-            ctx.lineTo(geo.pitBotLeft, geo.quarryBottom);
-            ctx.fill();
-
-            // Hard Rock
-            ctx.fillStyle = '#27272a'; // Dark grey rock
-            ctx.fillRect(0, geo.quarryBottom, cw, geo.deepAquifer - geo.quarryBottom);
-
-            // Sump Pipes
-            if (state.pump === 'active') {
-                ctx.fillStyle = '#94a3b8';
-                ctx.fillRect(geo.pitBotLeft, geo.linerTop, 15, -100);
-                ctx.fillRect(geo.pitBotRight - 15, geo.linerTop, 15, -100);
-            }
-
-            // Rock Fracture
-            if (state.rockFractured) {
-                ctx.strokeStyle = '#000'; ctx.lineWidth = 6;
-                ctx.beginPath();
-                ctx.moveTo(geo.hillCenter, geo.quarryBottom);
-                ctx.lineTo(geo.hillCenter - 15, geo.quarryBottom + 20);
-                ctx.lineTo(geo.hillCenter + 10, geo.deepAquifer);
-                ctx.stroke();
-            }
-
-            // Deep Aquifer
-            let aqColor = '#0284c7'; 
-            if(state.contamination > 200) aqColor = 'rgba(76, 29, 149, 0.9)';
-            ctx.fillStyle = aqColor;
-            ctx.fillRect(0, geo.deepAquifer, cw, ch - geo.deepAquifer);
-
-            // Flowing waves
-            state.time += (state.gwFlow === 'flowing') ? 0.05 : 0.01;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-            for(let j=1; j<=2; j++) {
-                ctx.beginPath(); ctx.moveTo(0, geo.deepAquifer);
-                for(let x=0; x<=cw; x+=20) { ctx.lineTo(x, geo.deepAquifer + (j*15) + Math.sin(x * 0.01 + state.time * j) * 10); }
-                ctx.lineTo(cw, ch); ctx.lineTo(0, ch); ctx.fill();
-            }
-
-            // Labels
-            ctx.fillStyle = 'rgba(255,255,255,0.7)';
-            ctx.font = '600 11px Poppins';
-            ctx.fillText("Landfill Cover", geo.hillLeft + 20, geo.hillPeak + 20);
-            ctx.fillText("Engineered Liner", geo.pitTopLeft + 30, geo.linerTop + 15);
-            ctx.fillText("Hard Rock Bedrock", 15, geo.quarryBottom + 20);
-            ctx.fillText("Deep Borewell Aquifer", 15, geo.deepAquifer + 20);
-        }
-
+        // --- Main Animation Loop ---
         function animate() {
+            // 1. Clear & Draw Static Background
             ctx.clearRect(0, 0, cw, ch);
-            drawEnvironment();
+            ctx.drawImage(bgCanvas, 0, 0);
 
-            let spawnRate = (state.weather === 'light') ? 2 : (state.weather === 'storm') ? 6 : 0;
-            
+            // 2. Spawn Particles (Rain / Natural Moisture)
+            let spawnRate = (state.weather === 'light') ? 2 : (state.weather === 'storm') ? 5 : 0;
             if (particles.length < MAX_PARTICLES) {
-                for(let i=0; i<spawnRate; i++) {
-                    if(Math.random() > 0.2) particles.push(new Particle(0));
-                }
-                if (Math.random() < 0.08) {
+                for(let i=0; i<spawnRate; i++) if(Math.random() > 0.2) particles.push(new Particle(0));
+                
+                // Natural moisture inside waste
+                if (Math.random() < 0.1) {
                     let p = new Particle(geo.groundLevel + Math.random() * (geo.quarryBottom - geo.groundLevel));
                     p.x = geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft);
-                    let toxin = getRandomToxin();
-                    p.color = toxin.color; p.type = toxin.type;
+                    p.color = getRandomToxin(); p.isContaminant = true;
                     particles.push(p);
                 }
             }
 
-            if (state.poolVolume > 400) state.rockFractured = true;
-
+            // 3. Update & Draw Particles
             for (let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
                 p.update();
@@ -581,12 +637,85 @@
                 if (p.dead) particles.splice(i, 1);
             }
 
+            // 4. Hydraulic System Logic (The Pool & Drain)
+            if (state.poolVolume > 0) {
+                let poolY = geo.linerTop - (state.poolVolume * 0.5); // Visual height based on volume
+                
+                // Draw Unified Pool (Zero lag compared to hundreds of particles)
+                ctx.fillStyle = 'rgba(120, 53, 15, 0.8)'; // Toxic brown pool
+                ctx.beginPath();
+                let leftEdge = getPitLeftBoundary(poolY);
+                let rightEdge = getPitRightBoundary(poolY);
+                ctx.moveTo(leftEdge, poolY);
+                ctx.lineTo(rightEdge, poolY);
+                ctx.lineTo(geo.pitBotRight, geo.linerTop);
+                ctx.lineTo(geo.pitBotLeft, geo.linerTop);
+                ctx.fill();
+
+                // Gravity Drain Logic (Hydraulic Flow = √Pressure)
+                if (state.drain === 'open' && !state.rockFractured && state.liner === 'compacted') {
+                    // Drain rate proportional to pool height
+                    let flowRate = Math.sqrt(state.poolVolume) * 0.05; 
+                    state.poolVolume -= flowRate;
+                    if (state.poolVolume < 0) state.poolVolume = 0;
+
+                    // Visual: Draw water shooting out of drain pipes laterally
+                    ctx.fillStyle = '#ca8a04';
+                    ctx.fillRect(geo.pitBotLeft - 30, geo.linerTop, 20, 5);
+                    ctx.fillRect(geo.pitBotRight + 10, geo.linerTop, 20, 5);
+                }
+
+                // Fracture Logic (Overpressure)
+                if (state.poolVolume > 100 && !state.rockFractured) {
+                    state.rockFractured = true;
+                }
+
+                // If Fractured, pool rapidly drains into aquifer
+                if (state.rockFractured) {
+                    state.poolVolume -= 1.5;
+                    if (state.poolVolume < 0) state.poolVolume = 0;
+                    
+                    // Visual: Massive toxic dump into aquifer
+                    ctx.fillStyle = '#991b1b';
+                    ctx.fillRect(geo.hillCenter - 10, geo.linerTop, 20, geo.deepAquifer - geo.linerTop);
+                    state.contamination += 20; // Massively pollute
+                }
+            }
+
+            // Draw Fracture Line
+            if (state.rockFractured) {
+                ctx.strokeStyle = '#000'; ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(geo.hillCenter, geo.quarryBottom);
+                ctx.lineTo(geo.hillCenter - 15, geo.quarryBottom + 20);
+                ctx.lineTo(geo.hillCenter + 10, geo.deepAquifer);
+                ctx.stroke();
+            }
+
+            // 5. Draw Dynamic Deep Aquifer
+            let aqColor = '#0284c7'; 
+            if(state.contamination > 1000) aqColor = 'rgba(153, 27, 27, 0.9)'; // Deep red toxic
+            else if(state.contamination > 100) aqColor = 'rgba(76, 29, 149, 0.9)'; // Purple contaminated
+            
+            ctx.fillStyle = aqColor;
+            ctx.fillRect(0, geo.deepAquifer, cw, ch - geo.deepAquifer);
+
+            // Flowing waves
+            state.time += (state.gwFlow === 'flowing') ? 0.08 : 0.01;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+            for(let j=1; j<=2; j++) {
+                ctx.beginPath(); ctx.moveTo(0, geo.deepAquifer);
+                for(let x=0; x<=cw; x+=30) { ctx.lineTo(x, geo.deepAquifer + (j*15) + Math.sin(x * 0.02 + state.time * j) * 8); }
+                ctx.lineTo(cw, ch); ctx.lineTo(0, ch); ctx.fill();
+            }
+
             updateStatusUI();
             requestAnimationFrame(animate);
         }
 
+        // Initialize
         resize();
-        updateStatusUI();
+        updatePoreViewer();
         animate();
     </script>
 </body>
