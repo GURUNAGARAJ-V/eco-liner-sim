@@ -116,7 +116,6 @@
             color: #fff; 
         }
 
-        /* --- Microscopic Pore Viewer --- */
         .pore-viewer-container {
             background: rgba(0,0,0,0.4);
             border-radius: 16px;
@@ -141,7 +140,6 @@
         .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; color: #fff; }
         .pore-info p { margin: 0; font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;}
 
-        /* --- Dynamic Status Box --- */
         .status-box {
             margin-top: auto;
             background: rgba(0,0,0,0.3);
@@ -263,12 +261,8 @@
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d', { alpha: true });
         const container = document.getElementById('canvas-container');
-
-        // Microscopic Canvas
         const pCanvas = document.getElementById('poreCanvas');
         const pCtx = pCanvas.getContext('2d');
-
-        // Offscreen Canvas for Lag-Free Static Background Rendering
         const bgCanvas = document.createElement('canvas');
         const bgCtx = bgCanvas.getContext('2d');
 
@@ -308,8 +302,8 @@
             liner: 'compacted',
             drain: 'open',
             gwFlow: 'static',
-            poolVolume: 0,        // Hydraulic pool size (0 to 100)
-            contamination: 0,     // Toxic load in aquifer
+            poolVolume: 0,        
+            contamination: 0,     
             rockFractured: false,
             time: 0
         };
@@ -326,7 +320,7 @@
                     if (stateKey === 'liner') {
                         state.poolVolume = 0; 
                         state.rockFractured = false;
-                        drawStaticBackground(); // Redraw liner color
+                        drawStaticBackground(); 
                         updatePoreViewer();
                     }
                     if(callback) callback();
@@ -346,7 +340,6 @@
             const elIntegrity = document.getElementById('st-integrity');
             const box = document.getElementById('status-box');
 
-            // Hydraulic Pressure (kPa estimation based on pool volume)
             let pressure = (state.poolVolume * 1.5).toFixed(1);
             
             if (state.liner === 'natural') {
@@ -396,9 +389,11 @@
                 box.style.borderLeftColor = "var(--accent-green)";
             }
 
-            // Flowing dispersion logic
-            if (state.gwFlow === 'flowing' && state.contamination > 0) {
-                state.contamination -= 2;
+            // Dynamics: Remediation & Recovery Time
+            if (state.contamination > 0) {
+                // Flowing dispersion recovers extremely fast. Static pooling recovers extremely slowly.
+                let recoveryRate = (state.gwFlow === 'flowing') ? 3.0 : 0.1;
+                state.contamination -= recoveryRate;
                 if (state.contamination < 0) state.contamination = 0;
             }
         }
@@ -409,8 +404,7 @@
             const title = document.getElementById('pore-title');
             const desc = document.getElementById('pore-desc');
 
-            // Draw Soil Grains (Base)
-            pCtx.fillStyle = '#b45309'; // Brown soil grains
+            pCtx.fillStyle = '#b45309'; 
             for(let y=10; y<=90; y+=25) {
                 for(let x=(y%50===10?10:25); x<=90; x+=30) {
                     pCtx.beginPath(); pCtx.arc(x, y, 12, 0, Math.PI*2); pCtx.fill();
@@ -420,12 +414,10 @@
             if (state.liner === 'natural') {
                 title.textContent = "Natural Soil (High Voids)";
                 desc.textContent = "Large gaps allow leachate to percolate directly to bedrock.";
-                // Voids remain empty (background color shows through)
             } 
             else if (state.liner === 'compacted') {
                 title.textContent = "Optimum Compaction";
-                desc.textContent = "Bentonite swells to block voids. Creates impermeable barrier.";
-                // Draw swollen bentonite (grey) filling the gaps
+                desc.textContent = "Bentonite swells to block voids. Permeability (k) \u2264 10\u207B\u2078 cm/s.";
                 pCtx.fillStyle = 'rgba(87, 83, 78, 0.8)';
                 for(let y=10; y<=90; y+=25) {
                     for(let x=(y%50===10?25:10); x<=90; x+=30) {
@@ -436,12 +428,10 @@
             else if (state.liner === 'damaged') {
                 title.textContent = "Desiccation Cracking";
                 desc.textContent = "Brittle liner forms structural cracks, rendering it ineffective.";
-                // Draw bentonite, then draw a jagged crack
                 pCtx.fillStyle = 'rgba(87, 83, 78, 0.8)';
                 pCtx.fillRect(0,0,100,100);
                 
-                pCtx.strokeStyle = '#000';
-                pCtx.lineWidth = 4;
+                pCtx.strokeStyle = '#000'; pCtx.lineWidth = 4;
                 pCtx.beginPath();
                 pCtx.moveTo(20, 0); pCtx.lineTo(40, 30); pCtx.lineTo(30, 60); pCtx.lineTo(60, 100);
                 pCtx.stroke();
@@ -451,15 +441,12 @@
             }
         }
 
-        // --- Fast Static Background Render ---
         function drawStaticBackground() {
             bgCtx.clearRect(0, 0, cw, ch);
             
-            // Shallow Soil
             bgCtx.fillStyle = '#452c1e'; 
             bgCtx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
 
-            // Waste Body Shape
             bgCtx.fillStyle = '#292524'; 
             bgCtx.beginPath();
             bgCtx.moveTo(geo.hillLeft, geo.groundLevel);
@@ -471,14 +458,12 @@
             bgCtx.lineTo(geo.pitTopLeft, geo.groundLevel);
             bgCtx.fill();
 
-            // Waste Texture (Rendered ONCE)
             bgCtx.fillStyle = 'rgba(255,255,255,0.03)';
             for(let i=0; i<150; i++) {
                 bgCtx.fillRect(geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft), geo.groundLevel + Math.random() * (geo.quarryBottom - geo.groundLevel), 5, 5);
             }
 
-            // Engineered Liner Layer
-            let linerColor = '#57534e'; // Compacted
+            let linerColor = '#57534e'; 
             if (state.liner === 'natural') linerColor = '#92400e'; 
             if (state.liner === 'damaged') linerColor = '#44403c'; 
             
@@ -490,16 +475,13 @@
             bgCtx.lineTo(geo.pitBotLeft, geo.quarryBottom);
             bgCtx.fill();
 
-            // Hard Rock Bedrock
             bgCtx.fillStyle = '#27272a'; 
             bgCtx.fillRect(0, geo.quarryBottom, cw, geo.deepAquifer - geo.quarryBottom);
 
-            // Gravity Drain Pipes (Lateral cuts in the rock)
-            bgCtx.fillStyle = '#0f172a'; // Empty pipe holes
+            bgCtx.fillStyle = '#0f172a'; 
             bgCtx.beginPath(); bgCtx.arc(geo.pitBotLeft - 10, geo.linerTop + 5, 10, 0, Math.PI*2); bgCtx.fill();
             bgCtx.beginPath(); bgCtx.arc(geo.pitBotRight + 10, geo.linerTop + 5, 10, 0, Math.PI*2); bgCtx.fill();
 
-            // Labels
             bgCtx.fillStyle = 'rgba(255,255,255,0.6)';
             bgCtx.font = '600 11px Poppins';
             bgCtx.fillText("MSW Hillock", geo.hillLeft + 20, geo.hillPeak + 20);
@@ -508,7 +490,6 @@
             bgCtx.fillText("Deep Aquifer", 15, geo.deepAquifer + 20);
         }
 
-        // --- Geometry Helpers ---
         function getSurfaceY(x) {
             if (x >= geo.hillLeft && x <= geo.hillCenter) return geo.groundLevel - ((x - geo.hillLeft) / (geo.hillCenter - geo.hillLeft)) * (geo.groundLevel - geo.hillPeak);
             if (x > geo.hillCenter && x <= geo.hillRight) return geo.hillPeak + ((x - geo.hillCenter) / (geo.hillRight - geo.hillCenter)) * (geo.groundLevel - geo.hillPeak);
@@ -527,15 +508,15 @@
 
         function getRandomToxin() {
             let r = Math.random();
-            if(r < 0.2) return '#c084fc'; // Metal
-            if(r < 0.4) return '#34d399'; // Organic
-            if(r < 0.6) return '#facc15'; // Salt
-            return '#f87171'; // Acid
+            if(r < 0.2) return '#c084fc'; 
+            if(r < 0.4) return '#34d399'; 
+            if(r < 0.6) return '#facc15'; 
+            return '#f87171'; 
         }
 
         // --- Particle Physics Engine ---
         let particles = [];
-        const MAX_PARTICLES = 300; // Lower limit keeps it perfectly smooth, logic handles the rest
+        const MAX_PARTICLES = 300; 
 
         class Particle {
             constructor(spawnY = 0) {
@@ -544,8 +525,10 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = 2.5;
-                this.color = '#38bdf8'; // Water
+                this.color = '#38bdf8'; 
                 this.isContaminant = false;
+                this.alpha = 1.0;
+                this.inAquifer = false;
             }
 
             update() {
@@ -558,7 +541,7 @@
 
                 // 1. Atmosphere
                 if (this.y < surfY) { /* Falling */ } 
-                // 2. Waste Body (Transforms to Toxin)
+                // 2. Waste Body
                 else if (this.y >= surfY && this.y < geo.linerTop && this.x > pLeft && this.x < pRight) {
                     if (!this.isContaminant) {
                         this.color = getRandomToxin();
@@ -570,21 +553,28 @@
                 // 3. Liner Interaction
                 else if (this.y >= geo.linerTop && this.y < geo.quarryBottom && this.x > pLeft && this.x < pRight) {
                     if (state.liner === 'natural' || state.liner === 'damaged') {
-                        this.vy = 2; // Passes through easily
+                        this.vy = 2; 
                     } else {
-                        // Compacted Liner: Particle hits liner and merges into the Pool. 
-                        // **Optimization:** We kill the particle immediately to prevent lag.
-                        state.poolVolume += 0.5;
-                        this.dead = true;
+                        // Compacted Liner: Either pool or drain properly
+                        if (state.drain === 'open' && !state.rockFractured) {
+                            // Target specific drain pipe coordinates
+                            let targetX = (this.x < geo.hillCenter) ? geo.pitBotLeft : geo.pitBotRight;
+                            let dir = Math.sign(targetX - this.x);
+                            this.vx = dir * 2.5; // Flow strongly toward drain
+                            this.y = geo.linerTop + 2; // Slide along top of liner
+                            if (Math.abs(this.x - targetX) < 15) this.dead = true; // Sucked into drain
+                        } else {
+                            state.poolVolume += 0.5;
+                            this.dead = true;
+                        }
                     }
                 }
                 // 4. Hard Rock / Fracture Interaction
                 else if (this.y >= geo.quarryBottom && this.y < geo.deepAquifer) {
                     if (this.x > geo.pitBotLeft && this.x < geo.pitBotRight) {
                         if (state.rockFractured) {
-                            this.vy = 4; // Fast flow through crack
+                            this.vy = 4; this.vx = 0;
                         } else {
-                            // Hit solid rock (came through bad liner). Merges into pool here.
                             state.poolVolume += 0.5;
                             this.dead = true; 
                         }
@@ -592,35 +582,43 @@
                         this.dead = true;
                     }
                 }
-                // 5. Deep Aquifer
+                // 5. Deep Aquifer (Mixing & Dispersion Visuals)
                 else if (this.y >= geo.deepAquifer) {
-                    if (this.isContaminant) state.contamination += 5; // Heavy weight per drop
-                    this.dead = true; // Remove to save rendering
+                    if (!this.inAquifer) {
+                        this.inAquifer = true;
+                        if (this.isContaminant) state.contamination += 5;
+                        // Mixing trajectory
+                        this.vy = 0.5 + Math.random() * 1.5; 
+                        this.vx = (state.gwFlow === 'flowing') ? (2 + Math.random() * 3) : ((Math.random() - 0.5) * 2);
+                    } else {
+                        // Fade out to simulate dissolving/mixing into the water table
+                        this.alpha -= 0.015;
+                        if (this.alpha <= 0) this.dead = true;
+                    }
                 }
 
                 if (this.y > ch || this.x < 0 || this.x > cw) this.dead = true;
             }
 
             draw() {
+                ctx.globalAlpha = this.alpha;
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.globalAlpha = 1.0;
             }
         }
 
         // --- Main Animation Loop ---
         function animate() {
-            // 1. Clear & Draw Static Background
             ctx.clearRect(0, 0, cw, ch);
             ctx.drawImage(bgCanvas, 0, 0);
 
-            // 2. Spawn Particles (Rain / Natural Moisture)
+            // Spawn
             let spawnRate = (state.weather === 'light') ? 2 : (state.weather === 'storm') ? 5 : 0;
             if (particles.length < MAX_PARTICLES) {
                 for(let i=0; i<spawnRate; i++) if(Math.random() > 0.2) particles.push(new Particle(0));
-                
-                // Natural moisture inside waste
                 if (Math.random() < 0.1) {
                     let p = new Particle(geo.groundLevel + Math.random() * (geo.quarryBottom - geo.groundLevel));
                     p.x = geo.pitBotLeft + Math.random() * (geo.pitBotRight - geo.pitBotLeft);
@@ -629,7 +627,7 @@
                 }
             }
 
-            // 3. Update & Draw Particles
+            // Update Particles
             for (let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i];
                 p.update();
@@ -637,12 +635,11 @@
                 if (p.dead) particles.splice(i, 1);
             }
 
-            // 4. Hydraulic System Logic (The Pool & Drain)
+            // Pool & Drain Logic
             if (state.poolVolume > 0) {
-                let poolY = geo.linerTop - (state.poolVolume * 0.5); // Visual height based on volume
+                let poolY = geo.linerTop - (state.poolVolume * 0.5); 
                 
-                // Draw Unified Pool (Zero lag compared to hundreds of particles)
-                ctx.fillStyle = 'rgba(120, 53, 15, 0.8)'; // Toxic brown pool
+                ctx.fillStyle = 'rgba(120, 53, 15, 0.8)';
                 ctx.beginPath();
                 let leftEdge = getPitLeftBoundary(poolY);
                 let rightEdge = getPitRightBoundary(poolY);
@@ -652,37 +649,20 @@
                 ctx.lineTo(geo.pitBotLeft, geo.linerTop);
                 ctx.fill();
 
-                // Gravity Drain Logic (Hydraulic Flow = √Pressure)
-                if (state.drain === 'open' && !state.rockFractured && state.liner === 'compacted') {
-                    // Drain rate proportional to pool height
-                    let flowRate = Math.sqrt(state.poolVolume) * 0.05; 
-                    state.poolVolume -= flowRate;
-                    if (state.poolVolume < 0) state.poolVolume = 0;
+                if (state.poolVolume > 100 && !state.rockFractured) state.rockFractured = true;
 
-                    // Visual: Draw water shooting out of drain pipes laterally
-                    ctx.fillStyle = '#ca8a04';
-                    ctx.fillRect(geo.pitBotLeft - 30, geo.linerTop, 20, 5);
-                    ctx.fillRect(geo.pitBotRight + 10, geo.linerTop, 20, 5);
-                }
-
-                // Fracture Logic (Overpressure)
-                if (state.poolVolume > 100 && !state.rockFractured) {
-                    state.rockFractured = true;
-                }
-
-                // If Fractured, pool rapidly drains into aquifer
                 if (state.rockFractured) {
                     state.poolVolume -= 1.5;
                     if (state.poolVolume < 0) state.poolVolume = 0;
                     
-                    // Visual: Massive toxic dump into aquifer
+                    // Visual massive dump
                     ctx.fillStyle = '#991b1b';
-                    ctx.fillRect(geo.hillCenter - 10, geo.linerTop, 20, geo.deepAquifer - geo.linerTop);
-                    state.contamination += 20; // Massively pollute
+                    ctx.fillRect(geo.hillCenter - 15, geo.linerTop, 30, geo.deepAquifer - geo.linerTop);
+                    state.contamination += 25; 
                 }
             }
 
-            // Draw Fracture Line
+            // Fracture Line
             if (state.rockFractured) {
                 ctx.strokeStyle = '#000'; ctx.lineWidth = 5;
                 ctx.beginPath();
@@ -692,10 +672,14 @@
                 ctx.stroke();
             }
 
-            // 5. Draw Dynamic Deep Aquifer
+            // Deep Aquifer Colors based on contamination load
             let aqColor = '#0284c7'; 
-            if(state.contamination > 1000) aqColor = 'rgba(153, 27, 27, 0.9)'; // Deep red toxic
-            else if(state.contamination > 100) aqColor = 'rgba(76, 29, 149, 0.9)'; // Purple contaminated
+            if(state.contamination > 1000) aqColor = 'rgba(153, 27, 27, 0.9)'; 
+            else if(state.contamination > 100) {
+                // Interpolate color roughly based on contamination depth
+                let opacity = Math.min(0.9, 0.5 + (state.contamination / 2000));
+                aqColor = `rgba(76, 29, 149, ${opacity})`;
+            }
             
             ctx.fillStyle = aqColor;
             ctx.fillRect(0, geo.deepAquifer, cw, ch - geo.deepAquifer);
