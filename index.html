@@ -59,7 +59,7 @@
             display: flex;
             gap: 24px;
             width: 100%;
-            max-width: 1800px; /* Expanded for full laptop width */
+            max-width: 1800px;
             height: 100%;
             z-index: 10;
         }
@@ -189,7 +189,7 @@
         .status-val { font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.95rem; text-shadow: 0 0 12px currentColor;}
 
         .simulation-area {
-            flex: 1; /* Automatically expands to take ALL remaining space */
+            flex: 1; 
             position: relative;
             background: #000;
         }
@@ -218,19 +218,12 @@
 
         /* --- PERFECT FULL-SCREEN MOBILE APP LAYOUT --- */
         @media (max-width: 900px) {
-            body { 
-                padding: 0; /* Remove padding to get true edge-to-edge layout */
-            }
-            .dashboard { 
-                flex-direction: column; 
-                gap: 0; 
-                border-radius: 0;
-            }
+            body { padding: 0; }
+            .dashboard { flex-direction: column; gap: 0; border-radius: 0; }
             
-            /* Put Simulation on TOP, exact 50% of screen */
             .simulation-area { 
                 order: -1; 
-                flex: 0 0 52vh; /* Takes a generous 52% of mobile screen height */
+                flex: 0 0 52vh; 
                 border-radius: 0 0 32px 32px;
                 border-top: none;
                 border-left: none;
@@ -238,12 +231,11 @@
                 z-index: 5;
             }
             
-            /* Controls take the bottom 48% and are scrollable */
             .controls-panel { 
                 flex: 1; 
                 padding: 20px 20px;
                 border-radius: 32px 32px 0 0;
-                margin-top: -24px; /* Creates a beautiful overlapping glass effect */
+                margin-top: -24px; 
                 z-index: 10;
             }
             
@@ -268,7 +260,7 @@
                 right: 12px;
                 padding: 8px 12px;
                 border-radius: 16px;
-                background: rgba(10, 15, 25, 0.65); /* More opaque for contrast */
+                background: rgba(10, 15, 25, 0.65); 
             }
             .legend-overlay h4 { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 4px;}
             .legend-item { gap: 6px; margin-bottom: 5px; font-size: 0.65rem;}
@@ -386,12 +378,11 @@
             
             activeMaxParticles = isMobile ? 400 : 1200; 
 
-            // FULLY OPTIMIZED SCALING: Stretches fully across the canvas without clipping
             geo = {
                 groundLevel: ch * (isMobile ? 0.25 : 0.25),      
                 hillPeak: ch * (isMobile ? 0.08 : 0.05),         
-                hillLeft: -50,             // Extend way past left bound
-                hillRight: cw + 50,        // Extend way past right bound
+                hillLeft: -50,             
+                hillRight: cw + 50,        
                 hillCenter: cw * 0.50,
                 pitTopLeft: cw * (isMobile ? 0.06 : 0.12),
                 pitTopRight: cw * (isMobile ? 0.94 : 0.88),
@@ -429,9 +420,8 @@
         function bindButtons(groupId, stateKey, callback) {
             document.querySelectorAll(`#${groupId} button`).forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    // --- Smooth Vibration / Haptic Feedback ---
                     if (navigator.vibrate) {
-                        navigator.vibrate(15); // Subtle, crisp 15ms tap response
+                        navigator.vibrate(15); 
                     }
 
                     document.querySelectorAll(`#${groupId} button`).forEach(b => b.classList.remove('active'));
@@ -649,12 +639,11 @@
                 bgCtx.beginPath(); bgCtx.arc(dx, geo.quarryBottom - t - (isMobile ? 5 : 6), isMobile ? 8 : 12, 0, Math.PI*2); bgCtx.stroke();
             });
 
-            // 5. Dynamic Labels and Arrows for Full-screen geometry
+            // 5. Dynamic Labels
             bgCtx.fillStyle = 'rgba(255,255,255,0.95)';
             bgCtx.font = `500 ${isMobile ? 10 : 12}px 'SF Pro Display', Poppins`;
             
             bgCtx.fillText("Precipitation", 10, 20);
-            
             bgCtx.fillText("Landfill Waste", geo.hillCenter - 40, geo.hillPeak + (isMobile ? 15 : 25));
             
             let linerTextX = isMobile ? cw * 0.05 : geo.pitTopLeft - 40;
@@ -662,7 +651,6 @@
             drawArrow(bgCtx, linerTextX + (isMobile ? 35 : 45), geo.groundLevel + 25, geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 40);
 
             bgCtx.fillText("Native Soil", 10, geo.quarryBottom - (isMobile ? 25 : 40));
-            
             bgCtx.fillText("Deep Aquifer", 10, geo.deepAquifer + (isMobile ? 15 : 20));
         }
 
@@ -768,11 +756,11 @@
                                 if (nearDrain) {
                                     this.dead = true; 
                                 } else {
-                                    state.poolVolume += (isMobile ? 0.8 : 0.5); 
+                                    state.poolVolume += (isMobile ? 0.3 : 0.2); 
                                     this.dead = true;
                                 }
                             } else {
-                                state.poolVolume += (isMobile ? 0.8 : 0.5); 
+                                state.poolVolume += (isMobile ? 0.3 : 0.2); 
                                 this.dead = true;
                             }
                         }
@@ -817,18 +805,19 @@
         function animate() {
             ctx.clearRect(0, 0, cw, ch);
             
+            // --- UPDATED RAIN & LEACHATE BALANCE ---
             let spawnRate = 0;
             let internalMoistureChance = 0;
 
             if (state.weather === 'none') {
                 spawnRate = 0;           
-                internalMoistureChance = isMobile ? 0.005 : 0.002; 
+                internalMoistureChance = 0.001; // Extremely rare leachate when dry
             } else if (state.weather === 'light') {
-                spawnRate = 1;            
-                internalMoistureChance = 0.03;  
+                spawnRate = 0.5; // Very light gentle rain, every other frame         
+                internalMoistureChance = 0.005; // Noticeable but sparse internal moisture
             } else if (state.weather === 'storm') {
-                spawnRate = isMobile ? 10 : 25; 
-                internalMoistureChance = 0.1;
+                spawnRate = isMobile ? 8 : 15; // Heavy rain drops
+                internalMoistureChance = 0.02; // Elevated leachate, but substantially less than rain density
             }
 
             let spawned = 0;
@@ -841,10 +830,8 @@
                         particles[i].reset();
                         
                         let testX = geo.pitTopLeft + 25 + Math.random() * (geo.pitTopRight - geo.pitTopLeft - 50);
-                        
                         let surfY = getSurfaceY(testX);
                         let lBot = geo.quarryBottom - geo.linerThickness;
-                        
                         let testY = surfY + 20 + Math.random() * (lBot - surfY - 40);
                         
                         let bLeft = getPitLeftBoundary(testY);
@@ -931,14 +918,12 @@
             requestAnimationFrame(animate);
         }
 
-        // Attach canvas properly
         bgCanvas.style.position = 'absolute';
         bgCanvas.style.top = '0';
         bgCanvas.style.left = '0';
         bgCanvas.style.zIndex = '-1';
         container.appendChild(bgCanvas);
         
-        // Initial setup
         resize();
         animate();
     </script>
