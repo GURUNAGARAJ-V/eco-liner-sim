@@ -38,7 +38,7 @@
             align-items: center;
             height: 100vh;
             height: 100dvh; /* Native app feel, no overflow */
-            padding: 24px;
+            padding: 20px;
             box-sizing: border-box;
             overflow: hidden; /* Prevent body scroll entirely */
             background-size: 200% 200%;
@@ -58,9 +58,10 @@
 
         .dashboard {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             width: 100%;
-            max-width: 1600px;
+            /* Removed fixed max-width to allow FULL screen expansion on laptops */
+            max-width: calc(100vw - 40px);
             height: 100%;
             z-index: 10;
         }
@@ -80,8 +81,8 @@
         }
 
         .controls-panel {
-            flex: 0 0 400px;
-            padding: 28px;
+            flex: 0 0 380px;
+            padding: 26px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -127,7 +128,6 @@
             transition: all 0.4s var(--spring-easing);
             position: relative;
             z-index: 1;
-            /* Disable mobile highlight tap colors */
             -webkit-tap-highlight-color: transparent; 
         }
         
@@ -159,8 +159,8 @@
             transition: all 0.3s ease;
         }
         .pore-canvas-wrapper {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.15);
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.2), inset 0 0 12px rgba(0,0,0,0.9);
@@ -171,7 +171,7 @@
         }
         .pore-canvas-wrapper canvas { width: 100%; height: 100%; display: block;}
         .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; font-weight: 600; color: #fff; }
-        .pore-info p { margin: 0; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;}
+        .pore-info p { margin: 0; font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;}
 
         .status-box {
             margin-top: auto;
@@ -191,7 +191,7 @@
         .status-val { font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.95rem; text-shadow: 0 0 12px currentColor;}
 
         .simulation-area {
-            flex: 1;
+            flex: 1; /* Automatically expands to take ALL remaining space */
             position: relative;
             background: #000;
         }
@@ -221,21 +221,22 @@
         /* --- STRICT NATIVE APP-LIKE MOBILE LAYOUT --- */
         @media (max-width: 900px) {
             body { 
-                padding: 8px; 
+                padding: 6px; 
             }
             .dashboard { 
                 flex-direction: column; 
-                gap: 12px;
+                gap: 10px;
+                max-width: 100%;
             }
             .controls-panel { 
-                flex: 0 0 44%; 
+                flex: 0 0 38%; /* Kept small to give the simulation MAX space */
                 max-width: 100%; 
-                padding: 14px 18px;
+                padding: 12px 16px;
                 border-radius: 24px;
-                gap: 12px;
+                gap: 10px;
             }
             .simulation-area { 
-                flex: 1 1 auto; 
+                flex: 1 1 62%; /* Simulation takes a huge 62% of mobile screen */
                 border-radius: 24px;
                 min-height: 0; 
             }
@@ -243,32 +244,34 @@
             header h1 { font-size: 1.15rem; }
             header p { margin: 4px 0 6px 0; font-size: 0.72rem; padding-bottom: 8px; }
             
-            .control-group h3 { margin: 0 0 6px 0; font-size: 0.65rem; }
+            .control-group h3 { margin: 0 0 4px 0; font-size: 0.65rem; }
             .btn-grid { gap: 4px; padding: 4px; border-radius: 14px; }
             button { padding: 8px 10px; font-size: 0.75rem; border-radius: 10px; }
 
             .pore-viewer-container { padding: 8px 12px; gap: 12px; border-radius: 16px; margin-top: 0;}
-            .pore-canvas-wrapper { width: 42px; height: 42px; }
+            .pore-canvas-wrapper { width: 40px; height: 40px; }
             .pore-info h4 { font-size: 0.75rem; margin-bottom: 2px;}
             .pore-info p { font-size: 0.65rem; }
 
-            .status-box { padding: 12px 16px; border-radius: 16px; margin-top: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);}
+            .status-box { padding: 10px 14px; border-radius: 16px; margin-top: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);}
             .status-box div { margin-bottom: 4px; font-size: 0.72rem; }
             .status-val { font-size: 0.8rem; }
             
             .legend-overlay {
-                top: 10px;
-                right: 10px;
-                padding: 10px 12px;
+                top: 8px;
+                right: 8px;
+                padding: 8px 12px;
                 border-radius: 16px;
+                background: rgba(10, 15, 25, 0.55); /* slightly more opaque for legibility over giant pit */
             }
-            .legend-overlay h4 { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 6px;}
-            .legend-item { gap: 8px; margin-bottom: 5px; font-size: 0.65rem;}
+            .legend-overlay h4 { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 4px;}
+            .legend-item { gap: 6px; margin-bottom: 5px; font-size: 0.6rem;}
         }
 
         @media (max-width: 480px) {
             .btn-grid.two-col { grid-template-columns: 1fr 1fr; }
-            .controls-panel { flex: 0 0 50%; padding: 12px; }
+            .controls-panel { flex: 0 0 42%; padding: 10px; }
+            .simulation-area { flex: 1 1 58%; }
             header h1 { font-size: 1.05rem; }
         }
     </style>
@@ -379,20 +382,20 @@
             
             activeMaxParticles = isMobile ? 400 : 1200; 
 
-            // ZOOMED IN GEOMETRY: Spreads elements wider and uses more vertical height
+            // SUPER-FULL GEOMETRY: Stretches practically edge-to-edge for massive diagrams
             geo = {
-                groundLevel: ch * (isMobile ? 0.22 : 0.35),      
-                hillPeak: ch * (isMobile ? 0.04 : 0.10),         
-                hillLeft: cw * (isMobile ? -0.10 : 0.05),     // Pushed beyond edges for wide view
-                hillRight: cw * (isMobile ? 1.10 : 0.95),
+                groundLevel: ch * (isMobile ? 0.15 : 0.25),      
+                hillPeak: ch * (isMobile ? 0.05 : 0.05),         
+                hillLeft: -20,             // Stretches past left edge
+                hillRight: cw + 20,        // Stretches past right edge
                 hillCenter: cw * 0.50,
-                pitTopLeft: cw * (isMobile ? 0.05 : 0.20),
-                pitTopRight: cw * (isMobile ? 0.95 : 0.80),
-                pitBotLeft: cw * (isMobile ? 0.20 : 0.30),
-                pitBotRight: cw * (isMobile ? 0.80 : 0.70),
+                pitTopLeft: cw * (isMobile ? 0.02 : 0.12),
+                pitTopRight: cw * (isMobile ? 0.98 : 0.88),
+                pitBotLeft: cw * (isMobile ? 0.15 : 0.25),
+                pitBotRight: cw * (isMobile ? 0.85 : 0.75),
                 linerThickness: isMobile ? 8 : 12,          
-                quarryBottom: ch * (isMobile ? 0.82 : 0.78),     
-                deepAquifer: ch * (isMobile ? 0.92 : 0.88)       
+                quarryBottom: ch * (isMobile ? 0.80 : 0.82),     
+                deepAquifer: ch * (isMobile ? 0.90 : 0.90)       
             };
 
             let pitWidth = geo.pitBotRight - geo.pitBotLeft;
@@ -424,7 +427,7 @@
                 btn.addEventListener('click', (e) => {
                     // --- Smooth Vibration / Haptic Feedback ---
                     if (navigator.vibrate) {
-                        navigator.vibrate(15); // Subtle 15ms tap
+                        navigator.vibrate(15); // Subtle, crisp 15ms tap response
                     }
 
                     document.querySelectorAll(`#${groupId} button`).forEach(b => b.classList.remove('active'));
@@ -573,7 +576,7 @@
         }
 
         function drawStaticBackground() {
-            bgCtx.fillStyle = '#060a12'; // Deep pitch dark for ultra glassy pop
+            bgCtx.fillStyle = '#060a12'; 
             bgCtx.fillRect(0, 0, cw, ch);
             
             // 1. Native Soil
@@ -630,7 +633,7 @@
             bgCtx.fill();
 
             bgCtx.fillStyle = 'rgba(255,255,255,0.03)';
-            for(let i=0; i < (isMobile ? 120 : 250); i++) {
+            for(let i=0; i < (isMobile ? 120 : 280); i++) {
                 bgCtx.fillRect(geo.pitBotLeft - 10 + Math.random() * (geo.pitBotRight - geo.pitBotLeft + 20), geo.groundLevel + Math.random() * (geo.quarryBottom - t - geo.groundLevel), 4, 4);
             }
 
@@ -642,7 +645,7 @@
                 bgCtx.beginPath(); bgCtx.arc(dx, geo.quarryBottom - t - (isMobile ? 5 : 6), isMobile ? 8 : 12, 0, Math.PI*2); bgCtx.stroke();
             });
 
-            // 5. Labels and Arrows dynamically placed for the new zoomed layout
+            // 5. Dynamic Labels and Arrows for Full-screen geometry
             bgCtx.fillStyle = 'rgba(255,255,255,0.95)';
             bgCtx.font = `500 ${isMobile ? 10 : 12}px 'SF Pro Display', Poppins`;
             
@@ -650,8 +653,10 @@
             
             bgCtx.fillText("Landfill Waste", geo.hillCenter - (isMobile ? 35 : 45), geo.hillPeak + (isMobile ? 20 : 30));
             
-            bgCtx.fillText("Engineered Liner", geo.pitTopLeft + (isMobile ? 5 : 15), geo.groundLevel + (isMobile ? 15 : 25));
-            drawArrow(bgCtx, geo.pitTopLeft + (isMobile ? 15 : 30), geo.groundLevel + (isMobile ? 20 : 30), geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 45);
+            // Adjust Liner text so it doesn't get cut off on the left when zoomed
+            let linerTextX = isMobile ? cw * 0.04 : geo.pitTopLeft + 15;
+            bgCtx.fillText("Engineered Liner", linerTextX, geo.groundLevel + 25);
+            drawArrow(bgCtx, linerTextX + 30, geo.groundLevel + 30, geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 45);
 
             bgCtx.fillText("Native Soil", 10, geo.quarryBottom - (isMobile ? 25 : 40));
             
@@ -814,7 +819,6 @@
 
             if (state.weather === 'none') {
                 spawnRate = 0;           
-                // Very rare and STRICTLY internal random generation
                 internalMoistureChance = isMobile ? 0.005 : 0.002; 
             } else if (state.weather === 'light') {
                 spawnRate = 1;            
@@ -831,20 +835,15 @@
                         particles[i].reset();
                         spawned++;
                     } else if (Math.random() < internalMoistureChance) { 
-                        // STRICTLY BOUNDED INTERNAL GENERATION
                         particles[i].reset();
                         
-                        // Pick a random X somewhere within the general pit width safely
                         let testX = geo.pitTopLeft + 25 + Math.random() * (geo.pitTopRight - geo.pitTopLeft - 50);
                         
-                        // Find the top surface at that exact X
                         let surfY = getSurfaceY(testX);
                         let lBot = geo.quarryBottom - geo.linerThickness;
                         
-                        // Pick a random Y strictly between the surface and the liner bottom
                         let testY = surfY + 20 + Math.random() * (lBot - surfY - 40);
                         
-                        // Double check it falls inside the slanted boundaries
                         let bLeft = getPitLeftBoundary(testY);
                         let bRight = getPitRightBoundary(testY);
                         
@@ -854,7 +853,7 @@
                             particles[i].color = getRandomToxin(); 
                             particles[i].isContaminant = true;
                         } else {
-                            particles[i].dead = true; // Abort if outside
+                            particles[i].dead = true; 
                         }
                     }
                 } else {
