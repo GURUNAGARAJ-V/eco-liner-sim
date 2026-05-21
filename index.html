@@ -9,17 +9,17 @@
 
         :root {
             /* Pure Transparent Frosted Liquid Glass Aesthetics */
-            --glass-bg: rgba(255, 255, 255, 0.05); /* Extremely sheer white base */
+            --glass-bg: rgba(255, 255, 255, 0.05); 
             --glass-border-light: rgba(255, 255, 255, 0.3);
             --glass-border-strong: rgba(255, 255, 255, 0.5);
             --glass-highlight: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.0) 100%);
             --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.2);
             
-            --track-bg: rgba(0, 0, 0, 0.15); /* Lighter track */
+            --track-bg: rgba(0, 0, 0, 0.15); 
             --track-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.2);
 
             --text-light: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.85); /* Brighter muted text for contrast on transparent bg */
+            --text-muted: rgba(255, 255, 255, 0.85); 
             
             --accent-blue: #38bdf8;
             --accent-green: #34d399;
@@ -45,7 +45,6 @@
             transition: background 1.5s ease-out;
         }
 
-        /* Lighter, more ethereal backgrounds to make the white glass pop */
         body.theme-none { background: linear-gradient(135deg, #1e293b, #0f172a, #020617); }
         body.theme-light { background: linear-gradient(135deg, #334155, #1e293b, #0f172a); } 
         body.theme-storm { background: linear-gradient(135deg, #312e81, #1e1b4b, #020617); }
@@ -95,7 +94,7 @@
         header h1 { 
             margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2;
             color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Needed text shadow for readability on transparent */
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
         }
         header p { 
             margin: 8px 0 10px 0; font-size: 0.85rem; font-weight: 500; color: #fff; opacity: 0.9;
@@ -142,7 +141,7 @@
         button:hover { color: #fff; }
         
         button.active { 
-            background: rgba(255, 255, 255, 0.3); /* Stronger white fill for active state */
+            background: rgba(255, 255, 255, 0.3); 
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-top: 1px solid rgba(255, 255, 255, 0.6);
             border-left: 1px solid rgba(255, 255, 255, 0.5);
@@ -155,7 +154,7 @@
         }
 
         .pore-viewer-container {
-            background: rgba(0, 0, 0, 0.15); /* Lighter background */
+            background: rgba(0, 0, 0, 0.15); 
             border-radius: 20px;
             padding: 14px;
             border: 1px solid rgba(255,255,255,0.15);
@@ -202,7 +201,7 @@
         .simulation-area {
             flex: 1; 
             position: relative;
-            background: transparent; /* Changed from black to transparent for the glass effect to work */
+            background: transparent; 
         }
         canvas#simCanvas { width: 100%; height: 100%; display: block; border-radius: 32px;}
 
@@ -272,7 +271,6 @@
                 right: 12px;
                 padding: 8px 12px;
                 border-radius: 16px;
-                /* Keeps legend readable over the simulation */
                 background: rgba(255, 255, 255, 0.1); 
                 backdrop-filter: blur(20px) saturate(180%);
             }
@@ -369,7 +367,6 @@
         const pCtx = pCanvas.getContext('2d');
         const poreRing = document.getElementById('pore-ring');
         
-        // bgCanvas is rendered entirely offscreen now, used for performance drawing
         const bgCanvas = document.createElement('canvas');
         const bgCtx = bgCanvas.getContext('2d', { alpha: true }); 
 
@@ -544,7 +541,7 @@
             else if (state.liner === 'compacted') {
                 title.textContent = "Optimum Compaction";
                 desc.textContent = "Bentonite expands to fill all soil voids. Forms an impermeable barrier.";
-                pCtx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Frosty bentonite fill
+                pCtx.fillStyle = 'rgba(255, 255, 255, 0.4)'; 
                 for(let y=10; y<=90; y+=25) {
                     for(let x=(y%50===10?25:10); x<=90; x+=30) {
                         pCtx.beginPath(); pCtx.arc(x, y, 10, 0, Math.PI*2); pCtx.fill();
@@ -582,15 +579,13 @@
         }
 
         function drawStaticBackground() {
-            // Because the container is glass, we don't draw a solid black background here.
-            // We just clear it so the CSS gradient behind shows through the glass area.
             bgCtx.clearRect(0, 0, cw, ch);
             
-            // 1. Native Soil
-            bgCtx.fillStyle = 'rgba(20, 10, 5, 0.7)'; // Translucent dark brown
+            // 1. Native Soil (Updated to Earthy Soil Color)
+            bgCtx.fillStyle = 'rgba(110, 75, 45, 0.75)'; 
             bgCtx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
 
-            bgCtx.fillStyle = 'rgba(255,255,255,0.05)'; // Subtle rocks
+            bgCtx.fillStyle = 'rgba(255,255,255,0.05)'; 
             let spacing = isMobile ? 35 : 22;
             for(let y = geo.groundLevel + 10; y < ch; y += spacing) {
                 for(let x = 10; x < cw; x += spacing + 4) {
@@ -601,7 +596,7 @@
 
             // 2. ENGINEERED LINER 
             let t = geo.linerThickness;
-            let linerColor = 'rgba(200, 200, 200, 0.8)'; // Bright frosted color
+            let linerColor = 'rgba(200, 200, 200, 0.8)'; 
             if (state.liner === 'natural') linerColor = 'rgba(190, 90, 15, 0.85)'; 
             if (state.liner === 'damaged') linerColor = 'rgba(150, 150, 150, 0.7)'; 
             
@@ -628,7 +623,7 @@
             }
 
             // 3. LANDFILL BODY
-            bgCtx.fillStyle = 'rgba(10, 10, 10, 0.8)'; // Dark mass
+            bgCtx.fillStyle = 'rgba(10, 10, 10, 0.8)'; 
             bgCtx.beginPath();
             bgCtx.moveTo(geo.hillLeft, geo.groundLevel);
             bgCtx.lineTo(geo.hillCenter, geo.hillPeak);
@@ -664,7 +659,7 @@
             let linerTextX = isMobile ? cw * 0.05 : geo.pitTopLeft - 40;
             bgCtx.fillText("Engineered Liner", linerTextX, geo.groundLevel + 20);
             
-            bgCtx.shadowBlur = 0; // Reset shadow for arrows
+            bgCtx.shadowBlur = 0; 
             bgCtx.strokeStyle = 'rgba(255,255,255,0.9)';
             drawArrow(bgCtx, linerTextX + (isMobile ? 35 : 45), geo.groundLevel + 25, geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 40);
 
@@ -710,7 +705,7 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = isMobile ? 1.8 : 2.5;
-                this.color = 'rgba(255, 255, 255, 0.7)'; // Brighter rain drops for contrast against dark background
+                this.color = 'rgba(56, 189, 248, 0.8)'; // Updated to Blue Raindrops
                 this.isContaminant = false;
                 this.alpha = 1.0;
                 this.inAquifer = false;
@@ -732,6 +727,8 @@
                 } 
                 else if (this.y >= surfY && this.y < linerBot) {
                     if (this.x > pLeft && this.x < pRight) {
+                        
+                        // Particle is inside the Landfill Waste Pit
                         this.x = Math.max(pLeft + 5, Math.min(this.x, pRight - 5));
 
                         if (!this.isContaminant) {
@@ -759,6 +756,8 @@
                             this.vy = 1.2;
                         }
                     } else {
+                        // Particle is outside the pit (Native Soil)
+                        // Continues to fall straight down and stays Blue
                         this.vx = Math.sin((this.y + this.voidOffset) * 0.15) * 1.2;
                         this.vy = 1.5;
                     }
@@ -823,7 +822,6 @@
         function animate() {
             ctx.clearRect(0, 0, cw, ch);
             
-            // Draw static background first from our buffer
             ctx.drawImage(bgCanvas, 0, 0);
             
             let spawnRate = 0;
