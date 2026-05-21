@@ -8,17 +8,18 @@
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
 
         :root {
-            --glass-bg: rgba(10, 15, 25, 0.45); 
-            --glass-border-light: rgba(255, 255, 255, 0.1);
-            --glass-border-strong: rgba(255, 255, 255, 0.25);
-            --glass-highlight: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
-            --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 1px 0 0 rgba(255, 255, 255, 0.1);
+            /* Pure Transparent Frosted Liquid Glass Aesthetics */
+            --glass-bg: rgba(255, 255, 255, 0.05); /* Extremely sheer white base */
+            --glass-border-light: rgba(255, 255, 255, 0.3);
+            --glass-border-strong: rgba(255, 255, 255, 0.5);
+            --glass-highlight: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.0) 100%);
+            --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 1px 0 0 rgba(255, 255, 255, 0.2);
             
-            --track-bg: rgba(0, 0, 0, 0.4);
-            --track-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.1);
+            --track-bg: rgba(0, 0, 0, 0.15); /* Lighter track */
+            --track-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.2);
 
             --text-light: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.85); /* Brighter muted text for contrast on transparent bg */
             
             --accent-blue: #38bdf8;
             --accent-green: #34d399;
@@ -44,9 +45,10 @@
             transition: background 1.5s ease-out;
         }
 
-        body.theme-none { background: linear-gradient(135deg, #090f1a, #161f30, #030712); }
-        body.theme-light { background: linear-gradient(135deg, #131c2b, #253146, #090f1a); } 
-        body.theme-storm { background: linear-gradient(135deg, #120f2b, #1d1b4b, #030712); }
+        /* Lighter, more ethereal backgrounds to make the white glass pop */
+        body.theme-none { background: linear-gradient(135deg, #1e293b, #0f172a, #020617); }
+        body.theme-light { background: linear-gradient(135deg, #334155, #1e293b, #0f172a); } 
+        body.theme-storm { background: linear-gradient(135deg, #312e81, #1e1b4b, #020617); }
 
         @keyframes fluidBg {
             0% { background-position: 0% 50%; }
@@ -67,8 +69,8 @@
         .glass-panel {
             background: var(--glass-bg);
             background-image: var(--glass-highlight);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid var(--glass-border-light);
             border-top: 1px solid var(--glass-border-strong);
             border-left: 1px solid var(--glass-border-strong);
@@ -92,14 +94,22 @@
 
         header h1 { 
             margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.3px; line-height: 1.2;
-            background: linear-gradient(135deg, #fff 40%, var(--accent-blue)); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Needed text shadow for readability on transparent */
         }
-        header p { margin: 8px 0 10px 0; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px;}
+        header p { 
+            margin: 8px 0 10px 0; font-size: 0.85rem; font-weight: 500; color: #fff; opacity: 0.9;
+            border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 16px;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+        }
 
         .control-group { margin-bottom: 2px; }
-        .control-group h3 { margin: 0 0 10px 0; font-size: 0.75rem; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 1.2px; display: flex; align-items: center; gap: 8px;}
-        .control-group h3::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 10px var(--accent-blue);}
+        .control-group h3 { 
+            margin: 0 0 10px 0; font-size: 0.75rem; color: #fff; text-transform: uppercase; 
+            letter-spacing: 1.2px; display: flex; align-items: center; gap: 8px; font-weight: 600;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+        }
+        .control-group h3::before { content: ''; display: inline-block; width: 6px; height: 6px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff;}
 
         .btn-grid { 
             display: grid; 
@@ -115,13 +125,13 @@
         button {
             background: transparent;
             border: 1px solid transparent;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.7);
             padding: 12px 14px;
             border-radius: 14px;
             cursor: pointer;
             font-family: inherit;
             font-size: 0.85rem;
-            font-weight: 500;
+            font-weight: 600;
             text-align: center;
             transition: all 0.4s var(--spring-easing);
             position: relative;
@@ -129,71 +139,72 @@
             -webkit-tap-highlight-color: transparent; 
         }
         
-        button:hover { color: var(--text-light); }
+        button:hover { color: #fff; }
         
         button.active { 
-            background: rgba(255, 255, 255, 0.15); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.3); /* Stronger white fill for active state */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
             color: #fff; 
-            font-weight: 600;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            font-weight: 700;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.5);
             transform: translateY(-1px) scale(1.02);
             z-index: 2;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
         .pore-viewer-container {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.15); /* Lighter background */
             border-radius: 20px;
             padding: 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-top: 1px solid rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-top: 1px solid rgba(255,255,255,0.3);
             display: flex;
             align-items: center;
             gap: 16px;
             margin-top: 4px;
-            box-shadow: inset 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: inset 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
         }
         .pore-canvas-wrapper {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.15);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2), inset 0 0 12px rgba(0,0,0,0.9);
+            border: 2px solid rgba(255,255,255,0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(0,0,0,0.5);
             overflow: hidden;
-            background: #111;
+            background: rgba(20,20,20,0.8);
             flex-shrink: 0;
             transition: all 0.4s var(--spring-easing);
         }
         .pore-canvas-wrapper canvas { width: 100%; height: 100%; display: block;}
-        .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; font-weight: 600; color: #fff; }
-        .pore-info p { margin: 0; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;}
+        .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);}
+        .pore-info p { margin: 0; font-size: 0.75rem; color: #eee; line-height: 1.4; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.5);}
 
         .status-box {
             margin-top: auto;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-top: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-top: 1px solid rgba(255,255,255,0.4);
             border-left: 6px solid var(--accent-green);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             transition: border-color 0.4s var(--spring-easing), box-shadow 0.4s ease;
         }
-        .status-box div { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem; font-weight: 500;}
+        .status-box div { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; color:#fff; text-shadow: 0 1px 4px rgba(0,0,0,0.5);}
         .status-box div:last-child { margin-bottom: 0; }
-        .status-val { font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.95rem; text-shadow: 0 0 12px currentColor;}
+        .status-val { font-weight: 700; font-family: ui-monospace, monospace; font-size: 0.95rem; text-shadow: 0 0 12px currentColor, 0 1px 2px rgba(0,0,0,0.8);}
 
         .simulation-area {
             flex: 1; 
             position: relative;
-            background: #000;
+            background: transparent; /* Changed from black to transparent for the glass effect to work */
         }
-        canvas#simCanvas { width: 100%; height: 100%; display: block; }
+        canvas#simCanvas { width: 100%; height: 100%; display: block; border-radius: 32px;}
 
         .legend-overlay {
             position: absolute;
@@ -202,8 +213,8 @@
             padding: 16px 22px;
             background: var(--glass-bg); 
             background-image: var(--glass-highlight);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid var(--glass-border-light);
             border-top: 1px solid var(--glass-border-strong);
             border-left: 1px solid var(--glass-border-strong);
@@ -211,10 +222,10 @@
             box-shadow: var(--glass-shadow);
             z-index: 20;
         }
-        .legend-overlay h4 { margin: 0 0 12px 0; font-size: 0.75rem; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
-        .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.9); font-weight: 500;}
+        .legend-overlay h4 { margin: 0 0 12px 0; font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.5);}
+        .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.75rem; color: #fff; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.5);}
         .legend-item:last-child { margin-bottom: 0;}
-        .color-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 12px currentColor, inset 0 1px 2px rgba(255,255,255,0.6); flex-shrink: 0;}
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 12px currentColor, inset 0 1px 2px rgba(255,255,255,0.8); flex-shrink: 0;}
 
         /* --- PERFECT FULL-SCREEN MOBILE APP LAYOUT --- */
         @media (max-width: 900px) {
@@ -230,6 +241,7 @@
                 border-right: none;
                 z-index: 5;
             }
+            canvas#simCanvas { border-radius: 0 0 32px 32px; }
             
             .controls-panel { 
                 flex: 1; 
@@ -251,7 +263,7 @@
             .pore-info h4 { font-size: 0.75rem; margin-bottom: 2px;}
             .pore-info p { font-size: 0.65rem; }
 
-            .status-box { padding: 12px 14px; border-radius: 16px; margin-top: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);}
+            .status-box { padding: 12px 14px; border-radius: 16px; margin-top: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.2);}
             .status-box div { margin-bottom: 4px; font-size: 0.75rem; }
             .status-val { font-size: 0.85rem; }
             
@@ -260,7 +272,9 @@
                 right: 12px;
                 padding: 8px 12px;
                 border-radius: 16px;
-                background: rgba(10, 15, 25, 0.65); 
+                /* Keeps legend readable over the simulation */
+                background: rgba(255, 255, 255, 0.1); 
+                backdrop-filter: blur(20px) saturate(180%);
             }
             .legend-overlay h4 { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 4px;}
             .legend-item { gap: 6px; margin-bottom: 5px; font-size: 0.65rem;}
@@ -355,8 +369,9 @@
         const pCtx = pCanvas.getContext('2d');
         const poreRing = document.getElementById('pore-ring');
         
+        // bgCanvas is rendered entirely offscreen now, used for performance drawing
         const bgCanvas = document.createElement('canvas');
-        const bgCtx = bgCanvas.getContext('2d', { alpha: false });
+        const bgCtx = bgCanvas.getContext('2d', { alpha: true }); 
 
         let cw, ch;
         let geo = {}; 
@@ -454,7 +469,7 @@
             
             if (state.liner === 'natural') {
                 elHead.textContent = "0.0 kPa (Leaking)";
-                elHead.style.color = "var(--text-muted)";
+                elHead.style.color = "rgba(255,255,255,0.7)";
             } else {
                 if (state.linerFailed) {
                     elHead.textContent = "PRESSURE LOST (Failed)";
@@ -493,17 +508,14 @@
                 elPurity.textContent = "TOXIC PLUME";
                 elPurity.style.color = "var(--accent-red)";
                 box.style.borderLeftColor = "var(--accent-red)";
-                box.style.boxShadow = "0 10px 30px rgba(251, 113, 133, 0.25)";
             } else if (state.contamination > 100) {
                 elPurity.textContent = "CONTAMINATED";
                 elPurity.style.color = "var(--accent-yellow)";
                 box.style.borderLeftColor = "var(--accent-yellow)";
-                box.style.boxShadow = "0 10px 30px rgba(251, 191, 36, 0.25)";
             } else {
                 elPurity.textContent = "SAFE";
                 elPurity.style.color = "var(--accent-green)";
                 box.style.borderLeftColor = "var(--accent-green)";
-                box.style.boxShadow = "0 10px 30px rgba(0,0,0,0.35)";
             }
 
             if (state.contamination > 0) {
@@ -532,7 +544,7 @@
             else if (state.liner === 'compacted') {
                 title.textContent = "Optimum Compaction";
                 desc.textContent = "Bentonite expands to fill all soil voids. Forms an impermeable barrier.";
-                pCtx.fillStyle = 'rgba(87, 83, 78, 0.9)';
+                pCtx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // Frosty bentonite fill
                 for(let y=10; y<=90; y+=25) {
                     for(let x=(y%50===10?25:10); x<=90; x+=30) {
                         pCtx.beginPath(); pCtx.arc(x, y, 10, 0, Math.PI*2); pCtx.fill();
@@ -542,10 +554,10 @@
             else if (state.liner === 'damaged') {
                 title.textContent = "Desiccation Cracking";
                 desc.textContent = "Brittle liner forms structural cracks, allowing massive leakage.";
-                pCtx.fillStyle = 'rgba(87, 83, 78, 0.85)';
+                pCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
                 pCtx.fillRect(0,0,100,100);
                 
-                pCtx.strokeStyle = '#000'; pCtx.lineWidth = 4;
+                pCtx.strokeStyle = '#fff'; pCtx.lineWidth = 4;
                 pCtx.beginPath();
                 pCtx.moveTo(20, 0); pCtx.lineTo(40, 30); pCtx.lineTo(30, 60); pCtx.lineTo(60, 100);
                 pCtx.stroke();
@@ -570,14 +582,15 @@
         }
 
         function drawStaticBackground() {
-            bgCtx.fillStyle = '#060a12'; 
-            bgCtx.fillRect(0, 0, cw, ch);
+            // Because the container is glass, we don't draw a solid black background here.
+            // We just clear it so the CSS gradient behind shows through the glass area.
+            bgCtx.clearRect(0, 0, cw, ch);
             
             // 1. Native Soil
-            bgCtx.fillStyle = '#301d12'; 
+            bgCtx.fillStyle = 'rgba(20, 10, 5, 0.7)'; // Translucent dark brown
             bgCtx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
 
-            bgCtx.fillStyle = 'rgba(0,0,0,0.3)';
+            bgCtx.fillStyle = 'rgba(255,255,255,0.05)'; // Subtle rocks
             let spacing = isMobile ? 35 : 22;
             for(let y = geo.groundLevel + 10; y < ch; y += spacing) {
                 for(let x = 10; x < cw; x += spacing + 4) {
@@ -588,9 +601,9 @@
 
             // 2. ENGINEERED LINER 
             let t = geo.linerThickness;
-            let linerColor = 'rgba(160, 155, 150, 0.8)'; 
+            let linerColor = 'rgba(200, 200, 200, 0.8)'; // Bright frosted color
             if (state.liner === 'natural') linerColor = 'rgba(190, 90, 15, 0.85)'; 
-            if (state.liner === 'damaged') linerColor = 'rgba(80, 75, 70, 0.9)'; 
+            if (state.liner === 'damaged') linerColor = 'rgba(150, 150, 150, 0.7)'; 
             
             bgCtx.fillStyle = linerColor;
             bgCtx.beginPath();
@@ -601,12 +614,12 @@
             bgCtx.lineTo(geo.pitTopLeft - t - 30, geo.groundLevel);
             bgCtx.fill();
 
-            bgCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            bgCtx.lineWidth = 1.5;
+            bgCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            bgCtx.lineWidth = 2;
             bgCtx.stroke();
 
             if (state.liner === 'damaged') {
-                bgCtx.strokeStyle = '#000'; bgCtx.lineWidth = 3;
+                bgCtx.strokeStyle = 'rgba(0,0,0,0.8)'; bgCtx.lineWidth = 3;
                 bgCtx.beginPath();
                 bgCtx.moveTo(geo.pitTopLeft - 2, geo.groundLevel); bgCtx.lineTo(geo.pitBotLeft + 5, geo.quarryBottom);
                 bgCtx.moveTo(geo.pitTopRight + 2, geo.groundLevel); bgCtx.lineTo(geo.pitBotRight - 5, geo.quarryBottom);
@@ -615,7 +628,7 @@
             }
 
             // 3. LANDFILL BODY
-            bgCtx.fillStyle = '#1c1a18'; 
+            bgCtx.fillStyle = 'rgba(10, 10, 10, 0.8)'; // Dark mass
             bgCtx.beginPath();
             bgCtx.moveTo(geo.hillLeft, geo.groundLevel);
             bgCtx.lineTo(geo.hillCenter, geo.hillPeak);
@@ -626,7 +639,7 @@
             bgCtx.lineTo(geo.pitTopLeft, geo.groundLevel);
             bgCtx.fill();
 
-            bgCtx.fillStyle = 'rgba(255,255,255,0.03)';
+            bgCtx.fillStyle = 'rgba(255,255,255,0.06)';
             for(let i=0; i < (isMobile ? 120 : 280); i++) {
                 bgCtx.fillRect(geo.pitBotLeft - 10 + Math.random() * (geo.pitBotRight - geo.pitBotLeft + 20), geo.groundLevel + Math.random() * (geo.quarryBottom - t - geo.groundLevel), 4, 4);
             }
@@ -635,23 +648,30 @@
             bgCtx.fillStyle = '#0f172a'; 
             drains.forEach(dx => {
                 bgCtx.beginPath(); bgCtx.arc(dx, geo.quarryBottom - t - (isMobile ? 5 : 6), isMobile ? 8 : 12, 0, Math.PI*2); bgCtx.fill();
-                bgCtx.strokeStyle = '#94a3b8'; bgCtx.lineWidth = 2;
+                bgCtx.strokeStyle = 'rgba(255,255,255,0.6)'; bgCtx.lineWidth = 2;
                 bgCtx.beginPath(); bgCtx.arc(dx, geo.quarryBottom - t - (isMobile ? 5 : 6), isMobile ? 8 : 12, 0, Math.PI*2); bgCtx.stroke();
             });
 
             // 5. Dynamic Labels
-            bgCtx.fillStyle = 'rgba(255,255,255,0.95)';
-            bgCtx.font = `500 ${isMobile ? 10 : 12}px 'SF Pro Display', Poppins`;
+            bgCtx.fillStyle = '#fff';
+            bgCtx.font = `600 ${isMobile ? 11 : 13}px 'SF Pro Display', Poppins`;
+            bgCtx.shadowColor = "rgba(0,0,0,0.8)";
+            bgCtx.shadowBlur = 4;
             
             bgCtx.fillText("Precipitation", 10, 20);
             bgCtx.fillText("Landfill Waste", geo.hillCenter - 40, geo.hillPeak + (isMobile ? 15 : 25));
             
             let linerTextX = isMobile ? cw * 0.05 : geo.pitTopLeft - 40;
             bgCtx.fillText("Engineered Liner", linerTextX, geo.groundLevel + 20);
+            
+            bgCtx.shadowBlur = 0; // Reset shadow for arrows
+            bgCtx.strokeStyle = 'rgba(255,255,255,0.9)';
             drawArrow(bgCtx, linerTextX + (isMobile ? 35 : 45), geo.groundLevel + 25, geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 40);
 
+            bgCtx.shadowBlur = 4;
             bgCtx.fillText("Native Soil", 10, geo.quarryBottom - (isMobile ? 25 : 40));
             bgCtx.fillText("Deep Aquifer", 10, geo.deepAquifer + (isMobile ? 15 : 20));
+            bgCtx.shadowBlur = 0;
         }
 
         function getSurfaceY(x) {
@@ -678,9 +698,7 @@
             return '#fb7185'; 
         }
 
-        // --- Particle Object Pool Engine ---
         let particles = [];
-
         class Particle {
             constructor() {
                 this.dead = true; 
@@ -692,7 +710,7 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = isMobile ? 1.8 : 2.5;
-                this.color = 'rgba(56, 189, 248, 0.7)'; 
+                this.color = 'rgba(255, 255, 255, 0.7)'; // Brighter rain drops for contrast against dark background
                 this.isContaminant = false;
                 this.alpha = 1.0;
                 this.inAquifer = false;
@@ -805,19 +823,21 @@
         function animate() {
             ctx.clearRect(0, 0, cw, ch);
             
-            // --- UPDATED RAIN & LEACHATE BALANCE ---
+            // Draw static background first from our buffer
+            ctx.drawImage(bgCanvas, 0, 0);
+            
             let spawnRate = 0;
             let internalMoistureChance = 0;
 
             if (state.weather === 'none') {
                 spawnRate = 0;           
-                internalMoistureChance = 0.001; // Extremely rare leachate when dry
+                internalMoistureChance = 0.001; 
             } else if (state.weather === 'light') {
-                spawnRate = 0.5; // Very light gentle rain, every other frame         
-                internalMoistureChance = 0.005; // Noticeable but sparse internal moisture
+                spawnRate = 0.5;      
+                internalMoistureChance = 0.005; 
             } else if (state.weather === 'storm') {
-                spawnRate = isMobile ? 8 : 15; // Heavy rain drops
-                internalMoistureChance = 0.02; // Elevated leachate, but substantially less than rain density
+                spawnRate = isMobile ? 8 : 15; 
+                internalMoistureChance = 0.02; 
             }
 
             let spawned = 0;
@@ -888,7 +908,7 @@
             }
 
             if (state.linerFailed) {
-                ctx.strokeStyle = '#000'; ctx.lineWidth = 6;
+                ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 6;
                 ctx.beginPath();
                 ctx.moveTo(geo.hillCenter, linerInnerBot - 20);
                 ctx.lineTo(geo.hillCenter - 15, geo.quarryBottom);
@@ -896,10 +916,10 @@
                 ctx.stroke();
             }
 
-            let aqColor = '#0284c7'; 
+            let aqColor = 'rgba(2, 132, 199, 0.8)'; 
             if(state.contamination > 1000) aqColor = 'rgba(153, 27, 27, 0.95)'; 
             else if(state.contamination > 100) {
-                let opacity = Math.min(0.95, 0.4 + (state.contamination / 3000));
+                let opacity = Math.min(0.95, 0.5 + (state.contamination / 3000));
                 aqColor = `rgba(76, 29, 149, ${opacity})`;
             }
             
@@ -907,7 +927,7 @@
             ctx.fillRect(0, geo.deepAquifer, cw, ch - geo.deepAquifer);
 
             state.time += (state.gwFlow === 'flowing') ? 0.08 : 0.015;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
             for(let j=1; j<=2; j++) {
                 ctx.beginPath(); ctx.moveTo(0, geo.deepAquifer);
                 for(let x=0; x<=cw; x+=40) { ctx.lineTo(x, geo.deepAquifer + (j*15) + Math.sin(x * 0.02 + state.time * j) * 8); }
@@ -917,12 +937,6 @@
             updateStatusUI();
             requestAnimationFrame(animate);
         }
-
-        bgCanvas.style.position = 'absolute';
-        bgCanvas.style.top = '0';
-        bgCanvas.style.left = '0';
-        bgCanvas.style.zIndex = '-1';
-        container.appendChild(bgCanvas);
         
         resize();
         animate();
