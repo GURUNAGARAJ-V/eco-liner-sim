@@ -8,15 +8,14 @@
         @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
 
         :root {
-            /* Enhanced Premium Liquid Glass Constants */
-            --glass-bg: rgba(10, 15, 25, 0.35); 
+            --glass-bg: rgba(10, 15, 25, 0.45); 
             --glass-border-light: rgba(255, 255, 255, 0.1);
             --glass-border-strong: rgba(255, 255, 255, 0.25);
             --glass-highlight: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
             --glass-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 1px 0 0 rgba(255, 255, 255, 0.1);
             
-            --track-bg: rgba(0, 0, 0, 0.35);
-            --track-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.1);
+            --track-bg: rgba(0, 0, 0, 0.4);
+            --track-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.1);
 
             --text-light: #ffffff;
             --text-muted: rgba(255, 255, 255, 0.7);
@@ -37,10 +36,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            height: 100dvh; /* Native app feel, no overflow */
-            padding: 20px;
+            height: 100dvh; 
+            padding: 24px;
             box-sizing: border-box;
-            overflow: hidden; /* Prevent body scroll entirely */
+            overflow: hidden; 
             background-size: 200% 200%;
             transition: background 1.5s ease-out;
         }
@@ -58,10 +57,9 @@
 
         .dashboard {
             display: flex;
-            gap: 20px;
+            gap: 24px;
             width: 100%;
-            /* Removed fixed max-width to allow FULL screen expansion on laptops */
-            max-width: calc(100vw - 40px);
+            max-width: 1800px; /* Expanded for full laptop width */
             height: 100%;
             z-index: 10;
         }
@@ -69,8 +67,8 @@
         .glass-panel {
             background: var(--glass-bg);
             background-image: var(--glass-highlight);
-            backdrop-filter: blur(24px) saturate(160%);
-            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
             border: 1px solid var(--glass-border-light);
             border-top: 1px solid var(--glass-border-strong);
             border-left: 1px solid var(--glass-border-strong);
@@ -81,8 +79,8 @@
         }
 
         .controls-panel {
-            flex: 0 0 380px;
-            padding: 26px;
+            flex: 0 0 400px;
+            padding: 28px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -159,8 +157,8 @@
             transition: all 0.3s ease;
         }
         .pore-canvas-wrapper {
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.15);
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.2), inset 0 0 12px rgba(0,0,0,0.9);
@@ -171,7 +169,7 @@
         }
         .pore-canvas-wrapper canvas { width: 100%; height: 100%; display: block;}
         .pore-info h4 { margin: 0 0 4px 0; font-size: 0.85rem; font-weight: 600; color: #fff; }
-        .pore-info p { margin: 0; font-size: 0.72rem; color: var(--text-muted); line-height: 1.4;}
+        .pore-info p { margin: 0; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;}
 
         .status-box {
             margin-top: auto;
@@ -218,61 +216,67 @@
         .legend-item:last-child { margin-bottom: 0;}
         .color-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 12px currentColor, inset 0 1px 2px rgba(255,255,255,0.6); flex-shrink: 0;}
 
-        /* --- STRICT NATIVE APP-LIKE MOBILE LAYOUT --- */
+        /* --- PERFECT FULL-SCREEN MOBILE APP LAYOUT --- */
         @media (max-width: 900px) {
             body { 
-                padding: 6px; 
+                padding: 0; /* Remove padding to get true edge-to-edge layout */
             }
             .dashboard { 
                 flex-direction: column; 
-                gap: 10px;
-                max-width: 100%;
+                gap: 0; 
+                border-radius: 0;
             }
-            .controls-panel { 
-                flex: 0 0 38%; /* Kept small to give the simulation MAX space */
-                max-width: 100%; 
-                padding: 12px 16px;
-                border-radius: 24px;
-                gap: 10px;
-            }
+            
+            /* Put Simulation on TOP, exact 50% of screen */
             .simulation-area { 
-                flex: 1 1 62%; /* Simulation takes a huge 62% of mobile screen */
-                border-radius: 24px;
-                min-height: 0; 
+                order: -1; 
+                flex: 0 0 52vh; /* Takes a generous 52% of mobile screen height */
+                border-radius: 0 0 32px 32px;
+                border-top: none;
+                border-left: none;
+                border-right: none;
+                z-index: 5;
+            }
+            
+            /* Controls take the bottom 48% and are scrollable */
+            .controls-panel { 
+                flex: 1; 
+                padding: 20px 20px;
+                border-radius: 32px 32px 0 0;
+                margin-top: -24px; /* Creates a beautiful overlapping glass effect */
+                z-index: 10;
             }
             
             header h1 { font-size: 1.15rem; }
-            header p { margin: 4px 0 6px 0; font-size: 0.72rem; padding-bottom: 8px; }
+            header p { margin: 4px 0 6px 0; font-size: 0.75rem; padding-bottom: 8px; }
             
-            .control-group h3 { margin: 0 0 4px 0; font-size: 0.65rem; }
+            .control-group h3 { margin: 0 0 6px 0; font-size: 0.65rem; }
             .btn-grid { gap: 4px; padding: 4px; border-radius: 14px; }
-            button { padding: 8px 10px; font-size: 0.75rem; border-radius: 10px; }
+            button { padding: 10px 10px; font-size: 0.75rem; border-radius: 10px; }
 
-            .pore-viewer-container { padding: 8px 12px; gap: 12px; border-radius: 16px; margin-top: 0;}
-            .pore-canvas-wrapper { width: 40px; height: 40px; }
+            .pore-viewer-container { padding: 10px 12px; gap: 12px; border-radius: 16px; margin-top: 0;}
+            .pore-canvas-wrapper { width: 44px; height: 44px; }
             .pore-info h4 { font-size: 0.75rem; margin-bottom: 2px;}
             .pore-info p { font-size: 0.65rem; }
 
-            .status-box { padding: 10px 14px; border-radius: 16px; margin-top: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);}
-            .status-box div { margin-bottom: 4px; font-size: 0.72rem; }
-            .status-val { font-size: 0.8rem; }
+            .status-box { padding: 12px 14px; border-radius: 16px; margin-top: 0; box-shadow: 0 8px 20px rgba(0,0,0,0.3);}
+            .status-box div { margin-bottom: 4px; font-size: 0.75rem; }
+            .status-val { font-size: 0.85rem; }
             
             .legend-overlay {
-                top: 8px;
-                right: 8px;
+                top: 12px;
+                right: 12px;
                 padding: 8px 12px;
                 border-radius: 16px;
-                background: rgba(10, 15, 25, 0.55); /* slightly more opaque for legibility over giant pit */
+                background: rgba(10, 15, 25, 0.65); /* More opaque for contrast */
             }
             .legend-overlay h4 { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 4px;}
-            .legend-item { gap: 6px; margin-bottom: 5px; font-size: 0.6rem;}
+            .legend-item { gap: 6px; margin-bottom: 5px; font-size: 0.65rem;}
         }
 
         @media (max-width: 480px) {
             .btn-grid.two-col { grid-template-columns: 1fr 1fr; }
-            .controls-panel { flex: 0 0 42%; padding: 10px; }
-            .simulation-area { flex: 1 1 58%; }
-            header h1 { font-size: 1.05rem; }
+            header h1 { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -281,8 +285,8 @@
     <div class="dashboard">
         <div class="controls-panel glass-panel">
             <header>
-                <h1>Bengaluru Bellahalli Landfill Simulation</h1>
-                <p>Groundwater Protection & Hydrogeological Containment Model</p>
+                <h1>Bengaluru Bellahalli Landfill Groundwater Protection</h1>
+                <p>Advanced Hydrogeological Containment Model</p>
             </header>
 
             <div class="control-group">
@@ -382,20 +386,20 @@
             
             activeMaxParticles = isMobile ? 400 : 1200; 
 
-            // SUPER-FULL GEOMETRY: Stretches practically edge-to-edge for massive diagrams
+            // FULLY OPTIMIZED SCALING: Stretches fully across the canvas without clipping
             geo = {
-                groundLevel: ch * (isMobile ? 0.15 : 0.25),      
-                hillPeak: ch * (isMobile ? 0.05 : 0.05),         
-                hillLeft: -20,             // Stretches past left edge
-                hillRight: cw + 20,        // Stretches past right edge
+                groundLevel: ch * (isMobile ? 0.25 : 0.25),      
+                hillPeak: ch * (isMobile ? 0.08 : 0.05),         
+                hillLeft: -50,             // Extend way past left bound
+                hillRight: cw + 50,        // Extend way past right bound
                 hillCenter: cw * 0.50,
-                pitTopLeft: cw * (isMobile ? 0.02 : 0.12),
-                pitTopRight: cw * (isMobile ? 0.98 : 0.88),
-                pitBotLeft: cw * (isMobile ? 0.15 : 0.25),
-                pitBotRight: cw * (isMobile ? 0.85 : 0.75),
+                pitTopLeft: cw * (isMobile ? 0.06 : 0.12),
+                pitTopRight: cw * (isMobile ? 0.94 : 0.88),
+                pitBotLeft: cw * (isMobile ? 0.20 : 0.28),
+                pitBotRight: cw * (isMobile ? 0.80 : 0.72),
                 linerThickness: isMobile ? 8 : 12,          
-                quarryBottom: ch * (isMobile ? 0.80 : 0.82),     
-                deepAquifer: ch * (isMobile ? 0.90 : 0.90)       
+                quarryBottom: ch * (isMobile ? 0.75 : 0.78),     
+                deepAquifer: ch * (isMobile ? 0.86 : 0.88)       
             };
 
             let pitWidth = geo.pitBotRight - geo.pitBotLeft;
@@ -651,12 +655,11 @@
             
             bgCtx.fillText("Precipitation", 10, 20);
             
-            bgCtx.fillText("Landfill Waste", geo.hillCenter - (isMobile ? 35 : 45), geo.hillPeak + (isMobile ? 20 : 30));
+            bgCtx.fillText("Landfill Waste", geo.hillCenter - 40, geo.hillPeak + (isMobile ? 15 : 25));
             
-            // Adjust Liner text so it doesn't get cut off on the left when zoomed
-            let linerTextX = isMobile ? cw * 0.04 : geo.pitTopLeft + 15;
-            bgCtx.fillText("Engineered Liner", linerTextX, geo.groundLevel + 25);
-            drawArrow(bgCtx, linerTextX + 30, geo.groundLevel + 30, geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 45);
+            let linerTextX = isMobile ? cw * 0.05 : geo.pitTopLeft - 40;
+            bgCtx.fillText("Engineered Liner", linerTextX, geo.groundLevel + 20);
+            drawArrow(bgCtx, linerTextX + (isMobile ? 35 : 45), geo.groundLevel + 25, geo.pitTopLeft + (isMobile ? 8 : 15), geo.groundLevel + 40);
 
             bgCtx.fillText("Native Soil", 10, geo.quarryBottom - (isMobile ? 25 : 40));
             
@@ -928,14 +931,14 @@
             requestAnimationFrame(animate);
         }
 
+        // Attach canvas properly
         bgCanvas.style.position = 'absolute';
         bgCanvas.style.top = '0';
         bgCanvas.style.left = '0';
         bgCanvas.style.zIndex = '-1';
-        bgCanvas.style.borderRadius = '32px';
-        if(isMobile) bgCanvas.style.borderRadius = '24px';
         container.appendChild(bgCanvas);
         
+        // Initial setup
         resize();
         animate();
     </script>
