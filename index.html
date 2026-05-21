@@ -378,6 +378,14 @@
         const ABSOLUTE_MAX_PARTICLES = 1500;
         let activeMaxParticles = 300; 
 
+        // --- BUZZER HAPTIC FEEDBACK ---
+        function triggerFailureBuzzer() {
+            if (navigator.vibrate) {
+                // Smooth buzzer pattern: short buzzes followed by a longer failure buzz
+                navigator.vibrate([80, 40, 80, 40, 250]); 
+            }
+        }
+
         function resize() {
             cw = container.clientWidth;
             ch = container.clientHeight;
@@ -432,6 +440,7 @@
         function bindButtons(groupId, stateKey, callback) {
             document.querySelectorAll(`#${groupId} button`).forEach(btn => {
                 btn.addEventListener('click', (e) => {
+                    // Standard click vibration
                     if (navigator.vibrate) {
                         navigator.vibrate(15); 
                     }
@@ -439,6 +448,11 @@
                     document.querySelectorAll(`#${groupId} button`).forEach(b => b.classList.remove('active'));
                     e.target.classList.add('active');
                     state[stateKey] = e.target.dataset.val;
+
+                    // Trigger buzzer if user actively selects the damaged liner
+                    if (stateKey === 'liner' && state.liner === 'damaged') {
+                        triggerFailureBuzzer();
+                    }
                     
                     if (stateKey === 'weather') document.body.className = `theme-${state.weather}`;
                     if (stateKey === 'liner') {
@@ -581,7 +595,7 @@
         function drawStaticBackground() {
             bgCtx.clearRect(0, 0, cw, ch);
             
-            // 1. Native Soil (Updated to Earthy Soil Color)
+            // 1. Native Soil (Earthy Soil Color)
             bgCtx.fillStyle = 'rgba(110, 75, 45, 0.75)'; 
             bgCtx.fillRect(0, geo.groundLevel, cw, ch - geo.groundLevel);
 
@@ -705,7 +719,7 @@
                 this.vx = 0;
                 this.vy = 4 + Math.random() * 3;
                 this.size = isMobile ? 1.8 : 2.5;
-                this.color = 'rgba(56, 189, 248, 0.8)'; // Updated to Blue Raindrops
+                this.color = 'rgba(56, 189, 248, 0.8)'; // Blue Raindrops
                 this.isContaminant = false;
                 this.alpha = 1.0;
                 this.inAquifer = false;
@@ -728,7 +742,7 @@
                 else if (this.y >= surfY && this.y < linerBot) {
                     if (this.x > pLeft && this.x < pRight) {
                         
-                        // Particle is inside the Landfill Waste Pit
+                        // Particle is inside the Landfill Waste Pit -> Turns toxic
                         this.x = Math.max(pLeft + 5, Math.min(this.x, pRight - 5));
 
                         if (!this.isContaminant) {
@@ -756,8 +770,7 @@
                             this.vy = 1.2;
                         }
                     } else {
-                        // Particle is outside the pit (Native Soil)
-                        // Continues to fall straight down and stays Blue
+                        // Particle is outside the pit (Native Soil) -> Stays Blue Water
                         this.vx = Math.sin((this.y + this.voidOffset) * 0.15) * 1.2;
                         this.vy = 1.5;
                     }
@@ -782,6 +795,7 @@
                             }
                         }
                     } else {
+                        // Outside Native soil below pit -> Stays blue
                         this.vy = 1.5;
                         this.vx = Math.sin((this.y + this.voidOffset) * 0.15) * 1.0;
                     }
@@ -891,7 +905,10 @@
                     if (state.poolVolume < 0) state.poolVolume = 0;
                 }
 
-                if (state.poolVolume > 120 && !state.linerFailed) state.linerFailed = true;
+                if (state.poolVolume > 120 && !state.linerFailed) {
+                    state.linerFailed = true;
+                    triggerFailureBuzzer(); // Trigger buzzer on catastrophic failure
+                }
 
                 if (state.linerFailed) {
                     state.poolVolume -= 3.0; 
@@ -936,6 +953,14 @@
             requestAnimationFrame(animate);
         }
         
+        // Attach canvas properly
+        bgCanvas.style.position = 'absolute';
+        bgCanvas.style.top = '0';
+        bgCanvas.style.left = '0';
+        bgCanvas.style.zIndex = '-1';
+        container.appendChild(bgCanvas);
+        
+        // Initial setup
         resize();
         animate();
     </script>
